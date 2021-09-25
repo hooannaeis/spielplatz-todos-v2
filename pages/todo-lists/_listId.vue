@@ -54,7 +54,7 @@
         </li>
       </ul>
     </div>
-    <div class="bg-red-300 card">
+    <div class="card bg-red-300">
       <h3 @click="toggleDangerZone">🧽🧼🧺</h3>
       <div class="w-full">
         <div v-if="showDangerZone">
