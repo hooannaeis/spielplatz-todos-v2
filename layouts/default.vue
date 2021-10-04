@@ -1,9 +1,9 @@
 <template>
-  <div class="app bg-dark-700 min-h-screen flex justify-center">
+  <div class="app bg-gray-700 min-h-screen flex justify-center" style="box-sizing: border-box">
     <Nuxt
       class="
         app_container
-        text-dark-700
+        text-gray-700
         bg-green-400
         min-h-screen
         pt-4
@@ -35,14 +35,14 @@ h3 {
 }
 
 textarea {
-  @apply bg-transparent resize-none h-8 border-0 border-b-2 p-1 w-full italic;
+  @apply bg-transparent resize-none h-8 border-0 border-b-2 p-1 w-full;
 }
 
 button {
-  @apply text-yellow-50 cursor-pointer text-lg rounded-full font-bold bg-green-400 p-2 m-2;
+  @apply text-yellow-50 cursor-pointer text-lg rounded-full font-bold p-2;
 }
 
 .card {
-  @apply bg-yellow-50 p-3 m-4 rounded-lg flex flex-col items-center shadow-lg;
+  @apply p-3 rounded-lg flex flex-col items-center;
 }
 </style>

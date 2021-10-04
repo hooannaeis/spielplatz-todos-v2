@@ -1,5 +1,5 @@
 <template>
-  <div class="flex w-full items-center">
+  <div class="flex items-center m-2 bg-yellow-50 rounded-lg shadow-lg p-2">
     <input
       :id="'todo-checkbox-' + todoID"
       v-model="todoDone"
@@ -29,7 +29,7 @@
         :placeholder="todoDescription"
         @input="adjustTextAreaHeight"
       ></textarea>
-      <div class="absolute bg-gray-600 rounded animate-fade-in-down">
+      <div class="absolute bg-gray-600 rounded animate-fade-in-down p-2">
         <button class="bg-red-200" @click="toggleEditMode">✖️</button>
         <button
           @click="

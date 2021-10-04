@@ -1,36 +1,24 @@
 <template>
-  <div>
-    <div class="fixed z-10 flex items-center right-1 bottom-1">
-      <span
-        class="
-          bg-yellow-50
-          pr-2
-          rounded
-          flex
-          items-center
-          transition-all
-        "
-        :class="[
-          inADDMode ? ' opacity-100 w-full' : 'opacity-0 transform translate-x-full',
-          error ? 'animate-shake-left-right' : '',
-        ]"
+  <div class="fixed z-10 bottom-0 w-full">
+    <div class="flex-row flex items-center bg-gray-800 p-5">
+      <textarea
+        id="new-object-name"
+        ref="newObjectName"
+        type="text"
+        name="new-object-name"
+        rows="1"
+        :value="newObjectName"
+        placeholder="neu"
+        class="text-gray-100"
+        @input="handleInput"
+      />
+      <button
+        v-show="isSufficientInput"
+        class=" animate-fade-in-down"
+        @click="saveNewObject"
       >
-        <button class="bg-gray-700" @click="toggleAddMode">✖️</button>
-        <textarea
-          id="new-object-name"
-          ref="newObjectName"
-          type="text"
-          name="new-object-name"
-          rows="1"
-          :value="newObjectName"
-          placeholder="neu"
-          @input="handleInput"
-        />
-      </span>
-      <button v-if="!inADDMode" class="bg-gray-700" @click="toggleAddMode">
-        ➕
+        +
       </button>
-      <button v-else class="bg-gray-700" @click="saveNewObject">✔️</button>
     </div>
   </div>
 </template>
@@ -69,13 +57,21 @@ export default {
         name: this.newObjectName,
       }
     },
+    isSufficientInput() {
+      return this.newObjectName && this.newObjectName.length >= 1
+    },
   },
   methods: {
     handleInput(e) {
       this.error = undefined
-      e.target.style.height = 'auto'
-      e.target.style.height = `${e.target.scrollHeight}px`
+      this.setTargetHeight(e.target)
       this.newObjectName = e.target.value
+    },
+    setTargetHeight(target) {
+      this.$nextTick(() => {
+        target.style.height = 'auto'
+        target.style.height = `${target.scrollHeight}px`
+      })
     },
     focusNewName() {
       if (this.inADDMode) {
@@ -92,11 +88,7 @@ export default {
       this.focusNewName()
     },
     saveNewObject() {
-      if (!this.newObjectName) {
-        this.error = true
-        return
-      }
-
+      console.log(this.$refs.newObjectName)
       const FIRESTORE_COLLECTION =
         this.type === 'todo' ? `${this.currentPath}/todos` : 'todo-lists'
       const OBJECT_SKELLETON =
@@ -112,6 +104,8 @@ export default {
         .add(OBJECT_SKELLETON)
         .then((doc) => {
           this.newObjectName = undefined
+
+          this.setTargetHeight(this.$refs.newObjectName)
           if (this.redirectToObjectPath) {
             this.$router.push({ path: doc.path })
           } else {

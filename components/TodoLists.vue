@@ -4,7 +4,7 @@
       <div
         v-for="(listObject, listIndex) in todoLists"
         :key="listIndex"
-        class="card"
+        class="card bg-yellow-50 m-4"
       >
         <NuxtLink :to="'/todo-lists/' + listObject.id">
           <h3>
