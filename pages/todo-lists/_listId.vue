@@ -1,7 +1,9 @@
 <template>
   <div>
     <span class="flex items-center bg-gray-800 text-gray-100">
-      <NuxtLink to="/"><button class="rounded-l-lg">🏠</button></NuxtLink>
+      <NuxtLink to="/"
+        ><button class="rounded-l-lg bg-green-400">🏠</button></NuxtLink
+      >
       <h2>
         {{ todoListObject.name }}
       </h2>
@@ -44,7 +46,10 @@
     >
       <h3>erledigt</h3>
       <ul class="w-full">
-        <li v-for="doneTodo in doneTodos" :key="doneTodo['.key']">
+        <li
+          v-for="doneTodo in doneTodos.slice(0, currentMaxDoneTodoIndex)"
+          :key="doneTodo['.key']"
+        >
           <todo
             class="line-through"
             :initial-todo-description="doneTodo.description"
@@ -53,6 +58,9 @@
           ></todo>
         </li>
       </ul>
+      <button @click="toggleShowAllDoneTodos" class="font-light bg-green-800 rounded">
+        {{ currentDoneTodoButtonText }}
+      </button>
     </div>
     <div class="bg-red-300 card">
       <h3 @click="toggleDangerZone" class="cursor-pointer">🧽🧼🧺</h3>
@@ -100,8 +108,10 @@ export default {
       error: undefined,
       todoListObject: {},
       showDangerZone: false,
+      showAllDoneTodos: false,
+      defaultMaxDoneTodoIndex: 3,
       dragOptions: {
-        animation: 200,
+        animation: 300,
         group: 'description',
         disabled: false,
         ghostClass: 'ghost',
@@ -110,8 +120,19 @@ export default {
   },
   computed: {
     ...mapGetters('todos', ['openTodos', 'doneTodos']),
+    currentMaxDoneTodoIndex() {
+      if (this.showAllDoneTodos) {
+        return this.doneTodos.length
+      }
+      return this.defaultMaxDoneTodoIndex
+    },
+    currentDoneTodoButtonText() {
+      if (this.showAllDoneTodos) {
+        return 'weniger anzeigen'
+      }
+      return 'alle anzeigen'
+    },
   },
-
   mounted() {
     this.$store.commit('todos/updateCurrentPath', this.$route.fullPath.slice(1))
     const todoListRef = this.$fire.firestore.doc(this.$route.fullPath.slice(1))
@@ -159,6 +180,9 @@ export default {
     this.$store.commit('todos/clearCurrentList')
   },
   methods: {
+    toggleShowAllDoneTodos() {
+      this.showAllDoneTodos = !this.showAllDoneTodos
+    },
     handleItemDragging(e) {
       console.log('change', e)
       this.drag = false
