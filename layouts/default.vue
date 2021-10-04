@@ -39,7 +39,7 @@ textarea {
 }
 
 button {
-  @apply text-yellow-50 cursor-pointer text-lg rounded-full font-bold p-2;
+  @apply text-yellow-50 cursor-pointer rounded-full font-bold p-2;
 }
 
 .card {

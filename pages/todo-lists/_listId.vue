@@ -8,11 +8,11 @@
         {{ todoListObject.name }}
       </h2>
     </span>
-    <div class="card">
+    <loading-todo class="m-5" v-if="loading"></loading-todo>
+    <loading-todo class="m-5" v-if="loading"></loading-todo>
+    <div class="card" v-else>
       <h3>offen</h3>
-      <div v-if="!openTodos">
-        Diese Liste ist leer
-      </div>
+      <div v-if="!openTodos">Diese Liste ist leer</div>
       <draggable
         tag="div"
         delay="300"
@@ -63,7 +63,13 @@
       <section class="grid grid-cols-2 justify-items-center">
         <button
           v-show="doneTodos.length > defaultMaxDoneTodoIndex"
-          class="font-light bg-yellow-50 rounded text-gray-700"
+          class="
+            font-light
+            bg-green-200
+            border-2 border-yellow-50
+            rounded
+            text-gray-700
+          "
           @click="toggleShowAllDoneTodos"
         >
           {{ currentDoneTodoButtonText }}
@@ -74,19 +80,37 @@
           decline-text="👎🏻"
           @acceptDecision="deleteAllDoneTodos"
         >
-          <button class="font-light bg-yellow-50 rounded text-gray-700">
+          <button
+            class="
+              font-light
+              bg-green-200
+              border-2 border-yellow-50
+              rounded
+              text-gray-700
+            "
+          >
             erledigte Todos löschen
           </button>
         </are-you-sure-execute>
       </section>
     </div>
-    <section class="grid justify-items-center bg-green-300 p-5 my-5">
+    <section v-if="!loading" class="grid justify-items-center bg-green-300 p-5 my-5">
       <are-you-sure-execute
         accept-text="👍🏻"
         decline-text="👎🏻"
         @acceptDecision="deleteList"
       >
-        <button class="w-full bg-red-400 font-light">Todoliste löschen</button>
+        <button
+          class="
+            w-full
+            bg-green-200
+            border-2 border-red-400
+            font-light
+            text-gray-700
+          "
+        >
+          Todoliste löschen
+        </button>
       </are-you-sure-execute>
     </section>
     <AddNew type="todo" />
@@ -98,13 +122,15 @@ import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 import Todo from '~/components/Todo.vue'
 import AreYouSureExecute from '~/components/AreYouSureExecute.vue'
+import LoadingTodo from '~/components/loadingTodo.vue'
 
 export default {
-  components: { draggable, Todo, AreYouSureExecute },
+  components: { draggable, Todo, AreYouSureExecute, LoadingTodo },
   data() {
     return {
       drag: false,
       error: undefined,
+      loading: true,
       todoListObject: {},
       showDangerZone: false,
       showAllDoneTodos: false,
@@ -158,6 +184,7 @@ export default {
       .collection('todos')
       .orderBy('rank')
       .onSnapshot((snapshot) => {
+        this.loading = false
         snapshot.docChanges().forEach((change) => {
           const todoUpdate = { '.key': change.doc.id, ...change.doc.data() }
           if (change.type === 'added') {

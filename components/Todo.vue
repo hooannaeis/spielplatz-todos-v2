@@ -30,9 +30,17 @@
         @input="adjustTextAreaHeight"
       ></textarea>
       <div class="absolute bg-gray-600 rounded animate-fade-in-down p-2 mx-2">
-        <button class="bg-red-100" @click="toggleEditMode">👎🏻</button>
         <button
-        class="bg-green-100"
+          class="bg-red-100"
+          @click="
+            discardChanges()
+            toggleEditMode()
+          "
+        >
+          👎🏻
+        </button>
+        <button
+          class="bg-green-100"
           @click="
             updateTodo({ description: todoDescription })
             toggleEditMode()
@@ -93,19 +101,22 @@ export default {
     },
     toggleEditMode() {
       if (!this.inEditMode) {
-        this.setTextAreaHeight()
         this.inEditMode = true
-        this.$nextTick(() => this.$refs.todoEditField.focus())
+        this.$nextTick(() => {
+          this.adjustTextAreaHeight(this.$refs.todoEditField)
+          this.$refs.todoEditField.focus()
+        })
       } else {
         this.inEditMode = false
       }
     },
-    setTextAreaHeight() {
-      this.textAreaHeight = `${this.$refs.todoDescription.clientHeight}px`
+    adjustTextAreaHeight(input) {
+      const realTarget = input.target || input
+      realTarget.style.height = 'auto'
+      realTarget.style.height = `${realTarget.scrollHeight}px`
     },
-    adjustTextAreaHeight(e) {
-      e.target.style.height = 'auto'
-      e.target.style.height = `${e.target.scrollHeight}px`
+    discardChanges() {
+      this.todoDescription = this.initialTodoDescription
     },
     updateTodo(updates) {
       this.$fire.firestore
