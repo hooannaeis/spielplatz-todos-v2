@@ -51,45 +51,41 @@
           :key="doneTodo['.key']"
         >
           <todo
-            class="line-through"
+            class="line-through bg-green-200"
             :initial-todo-description="doneTodo.description"
             :initial-todo-done="doneTodo.done"
             :todo-i-d="doneTodo['.key']"
           ></todo>
         </li>
       </ul>
-      <button @click="toggleShowAllDoneTodos" class="font-light bg-green-800 rounded">
-        {{ currentDoneTodoButtonText }}
-      </button>
+      <section class="grid grid-cols-2 justify-items-center">
+        <button
+          @click="toggleShowAllDoneTodos"
+          class="font-light bg-yellow-50 rounded text-gray-700"
+        >
+          {{ currentDoneTodoButtonText }}
+        </button>
+        <are-you-sure-execute
+          v-if="doneTodos.length > 0"
+          accept-text="👍🏻"
+          decline-text="👎🏻"
+          @acceptDecision="deleteAllDoneTodos"
+        >
+          <button class="font-light bg-yellow-50 rounded text-gray-700">
+            erledigte Todos löschen
+          </button>
+        </are-you-sure-execute>
+      </section>
     </div>
-    <div class="bg-red-300 card">
-      <h3 @click="toggleDangerZone" class="cursor-pointer">🧽🧼🧺</h3>
-      <div class="w-full">
-        <div v-if="showDangerZone">
-          <are-you-sure-execute
-            v-if="doneTodos.length > 0"
-            accept-text="löschen"
-            decline-text="abbrechen"
-            @acceptDecision="deleteAllDoneTodos"
-          >
-            <span>
-              <button class="bg-gray-700">🗑️</button>
-              erledigte Todos löschen
-            </span>
-          </are-you-sure-execute>
-          <are-you-sure-execute
-            accept-text="löschen"
-            decline-text="abbrechen"
-            @acceptDecision="deleteList"
-          >
-            <span>
-              <button class="bg-gray-700">🗑️</button>
-              Todoliste löschen
-            </span>
-          </are-you-sure-execute>
-        </div>
-      </div>
-    </div>
+    <section class="grid justify-items-center bg-green-300 p-5 my-5">
+      <are-you-sure-execute
+        accept-text="👍🏻"
+        decline-text="👎🏻"
+        @acceptDecision="deleteList"
+      >
+        <button class="w-full bg-red-400 font-light">Todoliste löschen</button>
+      </are-you-sure-execute>
+    </section>
     <AddNew type="todo" />
   </div>
 </template>

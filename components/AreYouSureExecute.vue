@@ -1,10 +1,15 @@
 <template>
-  <div class="w-full relative min-h-0 bg-transparent transition-all" :class="{ 'mh-2rem': showDecision }">
-    <span v-if="showDecision" class="absolute w-full h-full bg-yellow-50">
-      <button class="min-w-50 bg-red-300" @click="declineDecision">
+  <div
+    class="w-full relative bg-transparent transition-all"
+  >
+    <span
+      v-if="showDecision"
+      class="absolute w-full h-full grid grid-cols-2 gap-2 animate-fade-in-down"
+    >
+      <button class="p-1 m-1 bg-red-300" @click="declineDecision">
         {{ declineText }}
       </button>
-      <button class="min-w-50 bg-green-300" @click="acceptDecision">
+      <button class="p-1 m-1 bg-green-300" @click="acceptDecision">
         {{ acceptText }}
       </button>
     </span>
@@ -32,22 +37,22 @@ export default {
   data() {
     return {
       showDecision: false,
-    };
+    }
   },
   methods: {
     declineDecision() {
-      this.toggleDecisionMode();
-      this.$emit('declineDecision');
+      this.toggleDecisionMode()
+      this.$emit('declineDecision')
     },
     acceptDecision() {
-      this.toggleDecisionMode();
-      this.$emit('acceptDecision');
+      this.toggleDecisionMode()
+      this.$emit('acceptDecision')
     },
     toggleDecisionMode() {
-      this.showDecision = !this.showDecision;
+      this.showDecision = !this.showDecision
     },
   },
-};
+}
 </script>
 
 <style>
