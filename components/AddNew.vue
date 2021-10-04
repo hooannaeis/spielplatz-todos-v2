@@ -14,7 +14,7 @@
       />
       <button
         v-show="isSufficientInput"
-        class=" animate-fade-in-down"
+        class=" animate-fade-in-down bg-green-300 px-4"
         @click="saveNewObject"
       >
         +
@@ -88,7 +88,6 @@ export default {
       this.focusNewName()
     },
     saveNewObject() {
-      console.log(this.$refs.newObjectName)
       const FIRESTORE_COLLECTION =
         this.type === 'todo' ? `${this.currentPath}/todos` : 'todo-lists'
       const OBJECT_SKELLETON =

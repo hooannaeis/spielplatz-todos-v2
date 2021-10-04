@@ -29,15 +29,16 @@
         :placeholder="todoDescription"
         @input="adjustTextAreaHeight"
       ></textarea>
-      <div class="absolute bg-gray-600 rounded animate-fade-in-down p-2">
-        <button class="bg-red-200" @click="toggleEditMode">✖️</button>
+      <div class="absolute bg-gray-600 rounded animate-fade-in-down p-2 mx-2">
+        <button class="bg-red-100" @click="toggleEditMode">👎🏻</button>
         <button
+        class="bg-green-100"
           @click="
             updateTodo({ description: todoDescription })
             toggleEditMode()
           "
         >
-          ✔️
+          👍🏻
         </button>
         <button
           v-if="todoDone"
@@ -47,7 +48,7 @@
             toggleEditMode()
           "
         >
-          🗑️
+          💩
         </button>
       </div>
     </div>

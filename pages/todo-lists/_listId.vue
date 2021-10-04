@@ -10,7 +10,9 @@
     </span>
     <div class="card">
       <h3>offen</h3>
-      <div v-if="openTodos && openTodos.length < 1">Diese Liste ist leer</div>
+      <div v-if="!openTodos">
+        Diese Liste ist leer
+      </div>
       <draggable
         tag="div"
         delay="300"
@@ -60,8 +62,9 @@
       </ul>
       <section class="grid grid-cols-2 justify-items-center">
         <button
-          @click="toggleShowAllDoneTodos"
+          v-show="doneTodos.length > defaultMaxDoneTodoIndex"
           class="font-light bg-yellow-50 rounded text-gray-700"
+          @click="toggleShowAllDoneTodos"
         >
           {{ currentDoneTodoButtonText }}
         </button>
