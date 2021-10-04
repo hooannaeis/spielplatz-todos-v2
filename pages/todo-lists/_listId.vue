@@ -55,7 +55,7 @@
       </ul>
     </div>
     <div class="bg-red-300 card">
-      <h3 @click="toggleDangerZone">🧽🧼🧺</h3>
+      <h3 @click="toggleDangerZone" class="cursor-pointer">🧽🧼🧺</h3>
       <div class="w-full">
         <div v-if="showDangerZone">
           <are-you-sure-execute
