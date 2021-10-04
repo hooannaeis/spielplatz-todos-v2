@@ -1,5 +1,8 @@
 <template>
-  <div class="app bg-gray-700 min-h-screen flex justify-center" style="box-sizing: border-box">
+  <div
+    class="app bg-gray-700 min-h-screen flex justify-center"
+    style="box-sizing: border-box"
+  >
     <Nuxt
       class="
         app_container
@@ -35,7 +38,15 @@ h3 {
 }
 
 textarea {
-  @apply bg-transparent resize-none h-8 border-0 border-b-2 p-1 w-full;
+  overflow: auto;
+  outline: none;
+
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+
+  resize: none; /*remove the resize handle on the bottom right*/
+  @apply bg-transparent resize-none border-none  w-full;
 }
 
 button {
