@@ -1,14 +1,18 @@
 <template>
   <div>
     <span class="flex items-center bg-gray-800 text-gray-100">
-      <NuxtLink to="/"><button class="rounded-l-lg">🏠</button></NuxtLink>
+      <NuxtLink to="/"
+        ><button class="rounded-l-lg bg-green-400">🏠</button></NuxtLink
+      >
       <h2>
         {{ todoListObject.name }}
       </h2>
     </span>
-    <div class="card">
+    <loading-todo v-if="loading" class="m-5"></loading-todo>
+    <loading-todo v-if="loading" class="m-5"></loading-todo>
+    <div v-else class="card">
       <h3>offen</h3>
-      <div v-if="openTodos && openTodos.length < 1">Diese Liste ist leer</div>
+      <div v-if="!openTodos">Diese Liste ist leer</div>
       <draggable
         tag="div"
         delay="300"
@@ -44,44 +48,74 @@
     >
       <h3>erledigt</h3>
       <ul class="w-full">
-        <li v-for="doneTodo in doneTodos" :key="doneTodo['.key']">
+        <li
+          v-for="doneTodo in doneTodos.slice(0, currentMaxDoneTodoIndex)"
+          :key="doneTodo['.key']"
+        >
           <todo
-            class="line-through"
+            class="line-through bg-green-200"
             :initial-todo-description="doneTodo.description"
             :initial-todo-done="doneTodo.done"
             :todo-i-d="doneTodo['.key']"
           ></todo>
         </li>
       </ul>
-    </div>
-    <div class="card bg-red-300">
-      <h3 @click="toggleDangerZone">🧽🧼🧺</h3>
-      <div class="w-full">
-        <div v-if="showDangerZone">
-          <are-you-sure-execute
-            v-if="doneTodos.length > 0"
-            accept-text="löschen"
-            decline-text="abbrechen"
-            @acceptDecision="deleteAllDoneTodos"
+      <section class="grid grid-cols-2 justify-items-center">
+        <button
+          v-show="doneTodos.length > defaultMaxDoneTodoIndex"
+          class="
+            font-light
+            bg-green-200
+            border-2 border-yellow-50
+            rounded
+            text-gray-700
+          "
+          @click="toggleShowAllDoneTodos"
+        >
+          {{ currentDoneTodoButtonText }}
+        </button>
+        <are-you-sure-execute
+          v-if="doneTodos.length > 0"
+          accept-text="👍🏻"
+          decline-text="👎🏻"
+          @acceptDecision="deleteAllDoneTodos"
+        >
+          <button
+            class="
+              font-light
+              bg-green-200
+              border-2 border-yellow-50
+              rounded
+              text-gray-700
+            "
           >
-            <span>
-              <button class="bg-gray-700">🗑️</button>
-              erledigte Todos löschen
-            </span>
-          </are-you-sure-execute>
-          <are-you-sure-execute
-            accept-text="löschen"
-            decline-text="abbrechen"
-            @acceptDecision="deleteList"
-          >
-            <span>
-              <button class="bg-gray-700">🗑️</button>
-              Todoliste löschen
-            </span>
-          </are-you-sure-execute>
-        </div>
-      </div>
+            erledigte Todos löschen
+          </button>
+        </are-you-sure-execute>
+      </section>
     </div>
+    <section
+      v-if="!loading"
+      class="grid justify-items-center bg-green-300 p-5 my-5"
+    >
+      <are-you-sure-execute
+        accept-text="👍🏻"
+        decline-text="👎🏻"
+        @acceptDecision="deleteList"
+      >
+        <button
+          class="
+            w-full
+            bg-green-200
+            border-2 border-red-400
+            font-light
+            text-gray-700
+          "
+        >
+          Todoliste löschen
+        </button>
+      </are-you-sure-execute>
+    </section>
     <AddNew type="todo" />
   </div>
 </template>
@@ -91,17 +125,21 @@ import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 import Todo from '~/components/Todo.vue'
 import AreYouSureExecute from '~/components/AreYouSureExecute.vue'
+import LoadingTodo from '~/components/loadingTodo.vue'
 
 export default {
-  components: { draggable, Todo, AreYouSureExecute },
+  components: { draggable, Todo, AreYouSureExecute, LoadingTodo },
   data() {
     return {
       drag: false,
       error: undefined,
+      loading: true,
       todoListObject: {},
       showDangerZone: false,
+      showAllDoneTodos: false,
+      defaultMaxDoneTodoIndex: 3,
       dragOptions: {
-        animation: 200,
+        animation: 300,
         group: 'description',
         disabled: false,
         ghostClass: 'ghost',
@@ -110,8 +148,19 @@ export default {
   },
   computed: {
     ...mapGetters('todos', ['openTodos', 'doneTodos']),
+    currentMaxDoneTodoIndex() {
+      if (this.showAllDoneTodos) {
+        return this.doneTodos.length
+      }
+      return this.defaultMaxDoneTodoIndex
+    },
+    currentDoneTodoButtonText() {
+      if (this.showAllDoneTodos) {
+        return 'weniger anzeigen'
+      }
+      return 'alle anzeigen'
+    },
   },
-
   mounted() {
     this.$store.commit('todos/updateCurrentPath', this.$route.fullPath.slice(1))
     const todoListRef = this.$fire.firestore.doc(this.$route.fullPath.slice(1))
@@ -138,6 +187,7 @@ export default {
       .collection('todos')
       .orderBy('rank')
       .onSnapshot((snapshot) => {
+        this.loading = false
         snapshot.docChanges().forEach((change) => {
           const todoUpdate = { '.key': change.doc.id, ...change.doc.data() }
           if (change.type === 'added') {
@@ -159,6 +209,9 @@ export default {
     this.$store.commit('todos/clearCurrentList')
   },
   methods: {
+    toggleShowAllDoneTodos() {
+      this.showAllDoneTodos = !this.showAllDoneTodos
+    },
     handleItemDragging(e) {
       console.log('change', e)
       this.drag = false

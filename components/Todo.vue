@@ -1,5 +1,5 @@
 <template>
-  <div class="flex w-full items-center">
+  <div class="flex items-center m-2 bg-yellow-50 rounded-lg shadow-lg p-2">
     <input
       :id="'todo-checkbox-' + todoID"
       v-model="todoDone"
@@ -29,15 +29,24 @@
         :placeholder="todoDescription"
         @input="adjustTextAreaHeight"
       ></textarea>
-      <div class="absolute bg-gray-600 rounded animate-fade-in-down">
-        <button class="bg-red-200" @click="toggleEditMode">✖️</button>
+      <div class="absolute bg-gray-600 rounded animate-fade-in-down p-2 mx-2">
         <button
+          class="bg-red-100"
+          @click="
+            discardChanges()
+            toggleEditMode()
+          "
+        >
+          👎🏻
+        </button>
+        <button
+          class="bg-green-100"
           @click="
             updateTodo({ description: todoDescription })
             toggleEditMode()
           "
         >
-          ✔️
+          👍🏻
         </button>
         <button
           v-if="todoDone"
@@ -47,7 +56,7 @@
             toggleEditMode()
           "
         >
-          🗑️
+          💩
         </button>
       </div>
     </div>
@@ -92,19 +101,22 @@ export default {
     },
     toggleEditMode() {
       if (!this.inEditMode) {
-        this.setTextAreaHeight()
         this.inEditMode = true
-        this.$nextTick(() => this.$refs.todoEditField.focus())
+        this.$nextTick(() => {
+          this.adjustTextAreaHeight(this.$refs.todoEditField)
+          this.$refs.todoEditField.focus()
+        })
       } else {
         this.inEditMode = false
       }
     },
-    setTextAreaHeight() {
-      this.textAreaHeight = `${this.$refs.todoDescription.clientHeight}px`
+    adjustTextAreaHeight(input) {
+      const realTarget = input.target || input
+      realTarget.style.height = 'auto'
+      realTarget.style.height = `${realTarget.scrollHeight}px`
     },
-    adjustTextAreaHeight(e) {
-      e.target.style.height = 'auto'
-      e.target.style.height = `${e.target.scrollHeight}px`
+    discardChanges() {
+      this.todoDescription = this.initialTodoDescription
     },
     updateTodo(updates) {
       this.$fire.firestore
