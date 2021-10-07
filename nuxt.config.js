@@ -60,6 +60,9 @@ export default {
       }
     }
   },
-
-  target: "static"
+  target: 'static',
+  ssr: false,
+  generate: {
+    fallback: true,
+  },
 }
