@@ -60,7 +60,7 @@
           ></todo>
         </li>
       </ul>
-      <section class="grid grid-cols-2 justify-items-center">
+      <section class="grid justify-items-center">
         <button
           v-show="doneTodos.length > defaultMaxDoneTodoIndex"
           class="
@@ -74,30 +74,30 @@
         >
           {{ currentDoneTodoButtonText }}
         </button>
-        <are-you-sure-execute
-          v-if="doneTodos.length > 0"
-          accept-text="👍🏻"
-          decline-text="👎🏻"
-          @acceptDecision="deleteAllDoneTodos"
-        >
-          <button
-            class="
-              font-light
-              bg-green-200
-              border-2 border-yellow-50
-              rounded
-              text-gray-700
-            "
-          >
-            erledigte Todos löschen
-          </button>
-        </are-you-sure-execute>
       </section>
     </div>
     <section
       v-if="!loading"
-      class="grid justify-items-center bg-green-300 p-5 my-5"
+      class="grid gap-y-4 justify-items-center bg-green-300 p-5 my-5"
     >
+      <are-you-sure-execute
+        v-if="doneTodos.length > 0"
+        accept-text="👍🏻"
+        decline-text="👎🏻"
+        @acceptDecision="deleteAllDoneTodos"
+      >
+        <button
+          class="
+            w-full
+            bg-green-200
+            border-2 border-red-400
+            font-light
+            text-gray-700
+          "
+        >
+          erledigte Todos löschen
+        </button>
+      </are-you-sure-execute>
       <are-you-sure-execute
         accept-text="👍🏻"
         decline-text="👎🏻"

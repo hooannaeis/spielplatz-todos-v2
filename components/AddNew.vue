@@ -1,6 +1,6 @@
 <template>
   <div class="fixed z-10 bottom-0 w-full">
-    <div class="flex-row flex items-center bg-gray-800 p-5">
+    <div class="flex-row flex items-center bg-gray-800 p-5 border-t-2">
       <textarea
         id="new-object-name"
         ref="newObjectName"
