@@ -96,7 +96,7 @@ export const getters = {
       // therefore we can parse the current highest index from the data-object
       const parsedLexoRank = LexoRank.parse(state.currentHighestRank);
       rank = parsedLexoRank.genPrev().toString();
-    } else if (getters.openTodos.length) {
+    } else if (getters.openTodos && getters.openTodos.length) {
       // here, we have not created a todo in the current
       // lifecylce before, but there are todos created in the past
       // therefore, we can parse the current highest index from all openTodos
