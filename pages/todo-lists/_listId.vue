@@ -62,7 +62,7 @@
       </ul>
       <section class="grid justify-items-center">
         <button
-          v-show="doneTodos.length > defaultMaxDoneTodoIndex"
+          v-show="doneTodos && doneTodos.length && doneTodos.length > defaultMaxDoneTodoIndex"
           class="
             font-light
             bg-green-200
@@ -81,7 +81,7 @@
       class="grid gap-y-4 justify-items-center bg-green-300 p-5 my-5"
     >
       <are-you-sure-execute
-        v-if="doneTodos.length > 0"
+        v-if="doneTodos && doneTodos.length && doneTodos.length > 0"
         accept-text="👍🏻"
         decline-text="👎🏻"
         @acceptDecision="deleteAllDoneTodos"
