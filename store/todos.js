@@ -6,7 +6,8 @@ export const state = () => ({
     "example/path/to/list": []
   },
   currentPath: undefined,
-  currentHighestRank: undefined
+  currentHighestRank: undefined,
+  topTodos: []
 })
 
 export const mutations = {
@@ -35,6 +36,12 @@ export const mutations = {
   },
   setNewHighestRank(state, update) {
     Vue.set(state, "currentHighestRank", update)
+  },
+  addTopTodo(state, update) {
+    state.topTodos.push(update)
+  },
+  clearTopTodos(state) {
+    Vue.set(state, "topTodos", [])
   }
 }
 
@@ -53,6 +60,9 @@ export const getters = {
   },
   currentPath: (state) => {
     return state.currentPath
+  },
+  topTodos: (state) => {
+    return state.topTodos
   },
   getRankBetweenRanks: (state, getters) => (newIndex, oldIndex) => {
     const sortedTodos = getters.openTodos;

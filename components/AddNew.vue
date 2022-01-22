@@ -1,5 +1,28 @@
 <template>
   <div class="fixed z-10 bottom-0 w-full">
+    <transition-group
+      v-if="notDoneTopTodos && notDoneTopTodos.length"
+      name="grow"
+      tag="div"
+      class="
+        grid grid-flow-col
+        auto-cols-max
+        gap-x-4
+        p-2
+        bg-gray-700
+        rounded-t-xl
+        overflow-x-auto
+      "
+    >
+      <div
+        v-for="(topTodo, topTodoIndex) in notDoneTopTodos"
+        :key="topTodo + topTodoIndex"
+        class="rounded-xl bg-gray-500 border-gray-600 text-gray-50 p-2"
+        @click="saveNewObject(topTodo)"
+      >
+        {{ topTodo }}
+      </div>
+    </transition-group>
     <div class="flex-row flex items-center bg-gray-800 p-5 border-t-2">
       <textarea
         id="new-object-name"
@@ -12,9 +35,10 @@
         class="text-gray-100"
         @input="handleInput"
       />
+
       <button
         v-show="isSufficientInput"
-        class=" animate-fade-in-down bg-green-300 px-4"
+        class="animate-fade-in-down bg-green-300 px-4"
         @click="saveNewObject"
       >
         +
@@ -38,13 +62,18 @@ export default {
   data() {
     return {
       error: false,
-      newObjectName: undefined,
+      newObjectName: '',
       inADDMode: false,
       addCardFlipped: true,
     }
   },
   computed: {
-    ...mapGetters('todos', ['currentPath', 'nextHighestRank']),
+    ...mapGetters('todos', [
+      'currentPath',
+      'nextHighestRank',
+      'topTodos',
+      'openTodos',
+    ]),
     todoSkelleton() {
       return {
         done: false,
@@ -59,6 +88,24 @@ export default {
     },
     isSufficientInput() {
       return this.newObjectName && this.newObjectName.length >= 1
+    },
+    notDoneTopTodos() {
+      if (this.type !== 'todo' || !this.openTodos || !this.topTodos) {
+        return
+      }
+      const openTodoArray = this.openTodos.map(function (obj) {
+        return obj.description
+      })
+      const topTodoArray = this.topTodos.map(function (obj) {
+        return obj.id
+      })
+      const notDoneTopTodos = topTodoArray.filter(
+        (todo) => !openTodoArray.includes(todo)
+      )
+      const todosFilterdByInputText = notDoneTopTodos.filter((item) =>
+        item.includes(this.newObjectName)
+      )
+      return todosFilterdByInputText
     },
   },
   methods: {
@@ -80,18 +127,31 @@ export default {
         })
       }
     },
-    toggleAddMode() {
-      this.inADDMode = !this.inADDMode
-      this.newObjectName = undefined
-      this.error = false
+    incrementTodoCounter(firestoreCollection, todo) {
+      const counterListRef = 'todo-counter'
+      const docRef = this.$fire.firestore.collection(counterListRef).doc(todo)
 
-      this.focusNewName()
+      docRef.set(
+        {
+          counter: this.$fireModule.firestore.FieldValue.increment(1),
+          list: firestoreCollection,
+        },
+        { merge: true }
+      )
     },
-    saveNewObject() {
+    saveNewObject(descriptionOverride) {
       const FIRESTORE_COLLECTION =
         this.type === 'todo' ? `${this.currentPath}/todos` : 'todo-lists'
-      const OBJECT_SKELLETON =
+      let OBJECT_SKELLETON =
         this.type === 'todo' ? this.todoSkelleton : this.todoListSkelleton
+
+      if (descriptionOverride && typeof(descriptionOverride) === 'string') {
+        OBJECT_SKELLETON = {
+          ...OBJECT_SKELLETON,
+          description: descriptionOverride,
+        }
+      }
+      console.log('adding new todo: ', OBJECT_SKELLETON)
 
       if (this.type === 'todo') {
         OBJECT_SKELLETON.rank = this.nextHighestRank
@@ -102,12 +162,18 @@ export default {
         .collection(FIRESTORE_COLLECTION)
         .add(OBJECT_SKELLETON)
         .then((doc) => {
-          this.newObjectName = undefined
+          this.newObjectName = ''
 
           this.setTargetHeight(this.$refs.newObjectName)
+
+          // this exists if we are creating a new list
           if (this.redirectToObjectPath) {
             this.$router.push({ path: doc.path })
           } else {
+            this.incrementTodoCounter(
+              FIRESTORE_COLLECTION,
+              OBJECT_SKELLETON.description
+            )
             this.focusNewName()
           }
         })
@@ -116,4 +182,33 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+/* base */
+.grow {
+  backface-visibility: hidden;
+  z-index: 1;
+}
+
+/* moving */
+.grow-move {
+  transition: all 600ms ease-in-out 50ms;
+}
+
+/* appearing */
+.grow-enter-active {
+  transition: all 400ms ease-out;
+}
+
+/* disappearing */
+.grow-leave-active {
+  transition: all 400ms ease-in;
+  position: absolute;
+  z-index: 0;
+}
+
+/* appear at / disappear to */
+.grow-enter,
+.grow-leave-to {
+  opacity: 0;
+}
+</style>

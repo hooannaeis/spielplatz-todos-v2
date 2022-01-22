@@ -1,4 +1,19 @@
 {
-  "indexes": [],
+  "indexes": [
+    {
+      "collectionGroup": "todo-counter",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "list",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "counter",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
   "fieldOverrides": []
 }

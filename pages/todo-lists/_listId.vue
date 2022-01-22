@@ -62,7 +62,11 @@
       </ul>
       <section class="grid justify-items-center">
         <button
-          v-show="doneTodos && doneTodos.length && doneTodos.length > defaultMaxDoneTodoIndex"
+          v-show="
+            doneTodos &&
+            doneTodos.length &&
+            doneTodos.length > defaultMaxDoneTodoIndex
+          "
           class="
             font-light
             bg-green-200
@@ -147,7 +151,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('todos', ['openTodos', 'doneTodos']),
+    ...mapGetters('todos', ['openTodos', 'doneTodos', 'currentPath']),
     currentMaxDoneTodoIndex() {
       if (this.showAllDoneTodos) {
         return this.doneTodos.length
@@ -163,54 +167,103 @@ export default {
   },
   mounted() {
     this.$store.commit('todos/updateCurrentPath', this.$route.fullPath.slice(1))
-    const todoListRef = this.$fire.firestore.doc(this.$route.fullPath.slice(1))
 
-    // retrieve the general todo-list
-    todoListRef
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          console.log('Document data:', doc.data())
-          this.todoListObject = doc.data()
-        } else {
-          // doc.data() will be undefined in this case
-          this.error = 'diese Liste exisitiert nicht'
-          console.log('No such document!')
-        }
-      })
-      .catch((error) => {
-        console.log('Error getting document:', error)
-      })
-
-    // get the collection of todos inside the todo-list object
-    todoListRef
-      .collection('todos')
-      .orderBy('rank')
-      .onSnapshot((snapshot) => {
-        this.loading = false
-        snapshot.docChanges().forEach((change) => {
-          const todoUpdate = { '.key': change.doc.id, ...change.doc.data() }
-          if (change.type === 'added') {
-            console.log('New todo: ', todoUpdate)
-            this.$store.commit('todos/add', todoUpdate)
-          }
-          if (change.type === 'modified') {
-            console.log('Modified todo: ', todoUpdate)
-            this.$store.commit('todos/modify', todoUpdate)
-          }
-          if (change.type === 'removed') {
-            console.log('Removed todo: ', todoUpdate)
-            this.$store.commit('todos/remove', todoUpdate)
-          }
-        })
-      })
+    this.getTodos()
+    this.setTopTodos()
   },
   beforeDestroy() {
     this.$store.commit('todos/clearCurrentList')
+    this.$store.commit('todos/clearTopTodos')
   },
   methods: {
     toggleShowAllDoneTodos() {
       this.showAllDoneTodos = !this.showAllDoneTodos
+    },
+    getTodos() {
+      const todoListRef = this.$fire.firestore.doc(
+        this.$route.fullPath.slice(1)
+      )
+
+      // retrieve the general todo-list
+      todoListRef
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            console.log('Document data:', doc.data())
+            this.todoListObject = doc.data()
+          } else {
+            // doc.data() will be undefined in this case
+            this.error = 'diese Liste exisitiert nicht'
+            console.log('No such document!')
+          }
+        })
+        .catch((error) => {
+          console.log('Error getting document:', error)
+        })
+
+      // get the collection of todos inside the todo-list object
+      todoListRef
+        .collection('todos')
+        .orderBy('rank')
+        .onSnapshot((snapshot) => {
+          this.loading = false
+          snapshot.docChanges().forEach((change) => {
+            const todoUpdate = { '.key': change.doc.id, ...change.doc.data() }
+            if (change.type === 'added') {
+              if (!this.isTodoInOpenTodos(change.doc.id)) {
+                console.log('New todo: ', todoUpdate)
+                this.$store.commit('todos/add', todoUpdate)
+              }
+            }
+            if (change.type === 'modified') {
+              console.log('Modified todo: ', todoUpdate)
+              this.$store.commit('todos/modify', todoUpdate)
+            }
+            if (change.type === 'removed') {
+              console.log('Removed todo: ', todoUpdate)
+              this.$store.commit('todos/remove', todoUpdate)
+            }
+          })
+        })
+    },
+    isTodoInOpenTodos(todoId) {
+      if (!this.openTodos || !this.openTodos.length) return false
+      
+      const existingTodosWithThisId = this.openTodos.filter((todo) => {
+        return todo['.key'] === todoId
+      })
+      const isInOpenTodos =
+        existingTodosWithThisId &&
+        existingTodosWithThisId.length &&
+        existingTodosWithThisId.length > 0
+      console.log(
+        'checking if ',
+        todoId,
+        ' already in open todos: ',
+        isInOpenTodos
+      )
+
+      return isInOpenTodos
+    },
+    setTopTodos() {
+      // get the most used todos in this list
+      const todoCounterRef = this.$fire.firestore.collection('todo-counter')
+      this.$store.commit('todos/clearTopTodos')
+
+      todoCounterRef
+        .where('list', '==', this.currentPath + '/todos')
+        .where('counter', '>', 1)
+        .orderBy('counter', 'desc')
+        .limit(10)
+        .onSnapshot((querySnapshot) => {
+          querySnapshot.docChanges().forEach((change) => {
+            const todoUpdate = { id: change.doc.id, ...change.doc.data() }
+            if (change.type === 'added') {
+              console.log('New top todo: ', todoUpdate)
+              this.$store.commit('todos/addTopTodo', todoUpdate)
+            }
+          })
+        })
     },
     handleItemDragging(e) {
       console.log('change', e)
