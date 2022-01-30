@@ -17,8 +17,17 @@
         max-w-screen-md
       "
     />
+    <nav-bar class="fixed top-0 right-5"></nav-bar>
   </div>
 </template>
+
+<script>
+import NavBar from '~/components/NavBar.vue'
+
+export default {
+  components: { NavBar },
+}
+</script>
 
 <style>
 h1,

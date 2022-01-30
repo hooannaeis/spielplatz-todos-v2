@@ -1,4 +1,4 @@
-import firebaseConfig from "./firebaseConfig"
+import firebaseConfig from "../firebaseConfig"
 
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head

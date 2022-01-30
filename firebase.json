@@ -3,10 +3,16 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
-  "hosting": {
-    "public": "dist",
+  "functions": {
     "predeploy": [
-      "npm run generate"
+      "npm --prefix \"$RESOURCE_DIR\" run lint",
+      "npm --prefix \"$RESOURCE_DIR\" run build"
+    ]
+  },
+  "hosting": {
+    "public": "./hosting/dist",
+    "predeploy": [
+      "npm run generate --prefix hosting"
     ],
     "ignore": [
       "firebase.json",
@@ -17,6 +23,10 @@
       {
         "source": "**",
         "destination": "/index.html"
+      },
+      {
+        "source": "/functions/annotateImage",
+        "function": "annotateImage"
       }
     ]
   },
