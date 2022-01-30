@@ -1,9 +1,6 @@
 <template>
   <div>
     <span class="flex items-center bg-gray-800 text-gray-100">
-      <NuxtLink to="/"
-        ><button class="rounded-l-lg bg-green-400">🏠</button></NuxtLink
-      >
       <h2>
         {{ todoListObject.name }}
       </h2>

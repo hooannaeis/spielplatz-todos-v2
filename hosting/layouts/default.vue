@@ -15,7 +15,11 @@
         pl-0
         w-full
         max-w-screen-md
+        transition
+        duration-150
+        ease-in
       "
+      :class="{'bg-blue-400': inRecipeMode}"
     />
     <nav-bar class="fixed top-0 right-5"></nav-bar>
   </div>
@@ -26,6 +30,17 @@ import NavBar from '~/components/NavBar.vue'
 
 export default {
   components: { NavBar },
+  data() {
+    return {
+      recipePath: '/recipes',
+      todoListPath: '/',
+    }
+  },
+  computed: {
+    inRecipeMode() {
+      return this.$route.fullPath.includes(this.recipePath)
+    },
+  },
 }
 </script>
 
