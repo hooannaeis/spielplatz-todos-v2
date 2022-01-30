@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center m-2 bg-yellow-50 rounded-lg shadow-lg p-2">
+  <pill>
     <input
       :id="'todo-checkbox-' + todoID"
       v-model="todoDone"
@@ -60,10 +60,11 @@
         </button>
       </div>
     </div>
-  </div>
+  </pill>
 </template>
 
 <script>
+
 export default {
   props: {
     initialTodoDescription: {
