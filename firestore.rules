@@ -10,5 +10,8 @@ service cloud.firestore {
     match /todo-counter/{todo} {
       allow read, write, delete;
     }
+    match /recipes/{todo} {
+      allow read, write, delete;
+    }
   }
 }
