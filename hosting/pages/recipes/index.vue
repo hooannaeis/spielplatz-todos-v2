@@ -1,11 +1,28 @@
 <template>
   <div class="relative">
     <h1 class="bg-gray-800 text-gray-100 p-4">Rezepte</h1>
+    <List :list="recipes" :link-path="/recipes/"/>
   </div>
 </template>
 
 <script>
 export default {
   layout: 'default',
+  data() {
+    return {
+      recipes: [],
+    }
+  },
+  mounted() {
+    this.$fire.firestore
+      .collection('recipes')
+      .onSnapshot((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, ' => ', doc.data())
+          this.recipes.push({ ...doc.data(), id: doc.id })
+        })
+      })
+  },
 }
 </script>

@@ -6,7 +6,7 @@
         :key="listIndex"
         class="card bg-yellow-50 m-4"
       >
-        <NuxtLink :to="'/todo-lists/' + listObject.id">
+        <NuxtLink :to="linkPath + listObject.id">
           <h3>
             {{ listObject.name }}
           </h3>
@@ -20,6 +20,7 @@
 export default {
   props: {
     list: { type: Array },
+    linkPath: { type: String, default: '/todo-lists/' },
   },
 }
 </script>
