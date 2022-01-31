@@ -2,7 +2,7 @@
   <div class="relative">
     <loading-todo v-if="loading" class="m-5"></loading-todo>
     <h1 v-else class="bg-gray-800 text-gray-100 p-4">{{ recipe.name }}</h1>
-    <div v-if="!loading && recipe.imageURLs.length">
+    <div v-if="!loading && recipe.imageURLs && recipe.imageURLs.length">
       <ul
         v-for="(imageUrl, imageUrlIndex) in recipe.imageURLs"
         :key="imageUrl + imageUrlIndex"

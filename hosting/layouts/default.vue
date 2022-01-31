@@ -19,7 +19,7 @@
         duration-150
         ease-in
       "
-      :class="{'bg-blue-400': inRecipeMode}"
+      :class="{ 'bg-blue-400': inRecipeMode }"
     />
     <nav-bar class="fixed top-0 right-5"></nav-bar>
   </div>
@@ -71,6 +71,16 @@ textarea {
 
   resize: none; /*remove the resize handle on the bottom right*/
   @apply bg-transparent resize-none border-none  w-full;
+}
+
+input[type=text] {
+  overflow: auto;
+  outline: none;
+
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  @apply bg-transparent resize-none border-b-2 border-gray-50  w-full;
 }
 
 button {
