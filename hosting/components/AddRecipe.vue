@@ -39,6 +39,7 @@
       :class="[inAddMode ? 'translate-y-0' : 'translate-y-full']"
     >
       <h2>neues Rezept anlegen</h2>
+      <div v-if="error" class="text-red-300">{{error}}</div>
       <input
         id="newRecipeName"
         v-model="newRecipeName"
@@ -56,6 +57,7 @@ export default {
     return {
       inAddMode: false,
       newRecipeName: undefined,
+      error: undefined,
     }
   },
   computed: {
@@ -68,15 +70,23 @@ export default {
       this.inAddMode = !this.inAddMode
     },
     saveNew() {
+      if (!this.newRecipeName ) {
+        this.error = "trage einen Rezeptnamen ein"
+        return
+      }
       const newRecipe = { name: this.newRecipeName }
       this.$fire.firestore
         .collection('recipes')
         .add(newRecipe)
         .then((doc) => {
+          this.error = undefined
           this.newRecipeName = ''
 
           // this exists if we are creating a new list
           this.$router.push({ path: doc.path })
+        })
+        .catch((err) => {
+          this.error = err
         })
     },
   },
