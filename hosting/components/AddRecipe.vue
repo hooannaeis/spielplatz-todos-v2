@@ -3,7 +3,7 @@
     <section class="w-full flex justify-end fixed bottom-4 right-4 z-10">
       <button
         v-show="isSufficientInput && inAddMode"
-        class="animate-fade-in-down bg-green-300 px-4"
+        class="animate-fade-in-down bg-green-300 px-4 mr-4"
         @click="saveNew"
       >
         v
@@ -39,9 +39,10 @@
       :class="[inAddMode ? 'translate-y-0' : 'translate-y-full']"
     >
       <h2>neues Rezept anlegen</h2>
-      <div v-if="error" class="text-red-300">{{error}}</div>
+      <div v-if="error" class="text-red-300">{{ error }}</div>
       <input
         id="newRecipeName"
+        ref="newRecipeName"
         v-model="newRecipeName"
         type="text"
         name="newRecipeName"
@@ -66,12 +67,25 @@ export default {
     },
   },
   methods: {
+    focusNewName() {
+      if (this.inAddMode) {
+        this.$nextTick(() => {
+          this.$refs.newRecipeName.focus()
+        })
+      }
+    },
     toggleAddMode() {
-      this.inAddMode = !this.inAddMode
+      if (this.inAddMode) {
+        this.inAddMode = false
+        this.error = undefined
+        return
+      }
+      this.inAddMode = true
+      this.focusNewName()
     },
     saveNew() {
-      if (!this.newRecipeName ) {
-        this.error = "trage einen Rezeptnamen ein"
+      if (!this.newRecipeName) {
+        this.error = 'trage einen Rezeptnamen ein'
         return
       }
       const newRecipe = { name: this.newRecipeName }
