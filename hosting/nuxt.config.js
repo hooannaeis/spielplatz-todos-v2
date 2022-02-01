@@ -30,25 +30,25 @@ export default {
     // https://go.nuxtjs.dev/tailwindcss
     '@nuxtjs/tailwindcss',
     '@nuxtjs/pwa',
+    '@nuxtjs/firebase',
   ],
+  firebase: {
+    config: firebaseConfig,
+    onFirebaseHosting: true,
+    services: {
+      firestore: {
+        memoryOnly: false, // default
+        enablePersistence: true,
+      },
+      storage: true
+    },
+  },
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
-    [
-      '@nuxtjs/firebase',
-      {
-        config: firebaseConfig,
-        onFirebaseHosting: true,
-        services: {
-          firestore: {
-            memoryOnly: false, // default
-            enablePersistence: true,
-          }
-        },
-      }
-    ]
+
   ],
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
