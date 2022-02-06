@@ -38,7 +38,7 @@
       "
       :class="[inAddMode ? 'translate-y-0' : 'translate-y-full']"
     >
-      <h2>neues Rezept anlegen</h2>
+      <h2>neues Rezept</h2>
       <div v-if="error" class="text-red-300">{{ error }}</div>
       <input
         id="newRecipeName"
@@ -48,11 +48,14 @@
         name="newRecipeName"
         placeholder="Rezeptname"
       />
+      <upload-images class="mt-8"></upload-images>
     </section>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   data() {
     return {
@@ -62,6 +65,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('recipes', ['imagesToUploadMetaData']),
     isSufficientInput() {
       return this.newRecipeName && this.newRecipeName.length >= 1
     },
@@ -74,6 +78,17 @@ export default {
         })
       }
     },
+    getKeyFromMetaDataObject(keyToGet) {
+      const keysToGet = []
+      for (const file in this.imagesToUploadMetaData) {
+        const fileValues = this.imagesToUploadMetaData[file]
+        console.log(fileValues)
+        if (fileValues[keyToGet]) {
+          keysToGet.push(fileValues[keyToGet])
+        }
+      }
+      return keysToGet
+    },
     toggleAddMode() {
       if (this.inAddMode) {
         this.inAddMode = false
@@ -83,12 +98,24 @@ export default {
       this.inAddMode = true
       this.focusNewName()
     },
-    saveNew() {
+    async saveNew() {
       if (!this.newRecipeName) {
         this.error = 'trage einen Rezeptnamen ein'
         return
       }
-      const newRecipe = { name: this.newRecipeName }
+
+      const fileList = Array.from(this.$store.getters['recipes/imagesToUpload'])
+      const fileRefs = await Promise.all(fileList.map(this.uploadFile))
+      console.log(fileRefs)
+
+      await Promise.all(fileRefs.map(this.getFileDownloadUrl))
+
+      const imageUrls = this.getKeyFromMetaDataObject('downloadUrl')
+      const fullPaths = this.getKeyFromMetaDataObject('fullPath')
+
+      console.log(imageUrls)
+
+      const newRecipe = { name: this.newRecipeName, imageUrls, fullPaths }
       this.$fire.firestore
         .collection('recipes')
         .add(newRecipe)
@@ -96,12 +123,63 @@ export default {
           this.error = undefined
           this.newRecipeName = ''
 
-          // this exists if we are creating a new list
           this.$router.push({ path: doc.path })
+          this.$store.commit('recipes/saveNewRecipe')
         })
         .catch((err) => {
           this.error = err
         })
+    },
+    async uploadFile(file) {
+      const fileName = file.name
+      const storageRef = this.$fire.storage.ref().child(fileName)
+      const metaData = {
+        contentType: file.type,
+      }
+      try {
+        const uploadTask = storageRef.put(file, metaData)
+        let fileRef
+        uploadTask.on(
+          'state_changed',
+          (snapshot) => {
+            // Observe state change events such as progress, pause, and resume
+            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+
+            this.$store.commit('recipes/setImageMetaData', {
+              fileName,
+              metaKey: 'uploadProgress',
+              metaValue: progress,
+            })
+          },
+          (error) => {
+            console.error(error)
+          },
+          () => {
+            // Handle successful uploads on complete
+            // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+            fileRef = uploadTask.snapshot.ref
+          }
+        )
+        await uploadTask
+        return fileRef
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    async getFileDownloadUrl(fileRef) {
+      const downloadUrl = await fileRef.getDownloadURL()
+      this.$store.commit('recipes/setImageMetaData', {
+        fileName: fileRef.name,
+        metaKey: 'downloadUrl',
+        metaValue: downloadUrl,
+      })
+      this.$store.commit('recipes/setImageMetaData', {
+        fileName: fileRef.name,
+        metaKey: 'fullPath',
+        metaValue: fileRef.fullPath,
+      })
     },
   },
 }
