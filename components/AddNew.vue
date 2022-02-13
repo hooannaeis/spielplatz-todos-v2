@@ -145,7 +145,7 @@ export default {
       let OBJECT_SKELLETON =
         this.type === 'todo' ? this.todoSkelleton : this.todoListSkelleton
 
-      if (descriptionOverride && typeof(descriptionOverride) === 'string') {
+      if (descriptionOverride && typeof descriptionOverride === 'string') {
         OBJECT_SKELLETON = {
           ...OBJECT_SKELLETON,
           description: descriptionOverride,
@@ -157,6 +157,10 @@ export default {
         OBJECT_SKELLETON.rank = this.nextHighestRank
         this.$store.commit('todos/setNewHighestRank', this.nextHighestRank)
       }
+      this.$fire.analytics.logEvent('added_new', {
+        type: OBJECT_SKELLETON.type,
+        description: OBJECT_SKELLETON.description,
+      })
 
       this.$fire.firestore
         .collection(FIRESTORE_COLLECTION)

@@ -10,9 +10,9 @@
     ]
   },
   "hosting": {
-    "public": "./hosting/dist",
+    "public": "./dist",
     "predeploy": [
-      "npm run generate --prefix hosting"
+      "npm run generate"
     ],
     "ignore": [
       "firebase.json",

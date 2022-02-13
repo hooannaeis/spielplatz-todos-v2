@@ -14,7 +14,11 @@
       "
       :class="{ '-mb-5 bg-green-900': !inRecipeMode }"
     >
-      <nuxt-link to="/"> ✔️ </nuxt-link>
+      <nuxt-link to="/">
+        <icon-base viewBox="0 0 80 80" icon-name="check-box" width="25">
+          <icon-check></icon-check>
+        </icon-base>
+      </nuxt-link>
     </li>
     <li
       class="
@@ -30,13 +34,25 @@
       "
       :class="{ '-mb-5 bg-blue-900': inRecipeMode }"
     >
-      <nuxt-link :to="recipePath"> 📓 </nuxt-link>
+      <nuxt-link :to="recipePath">
+        <icon-base viewBox="0 0 80 80" icon-name="check-box" width="25">
+          <icon-book></icon-book> </icon-base
+      ></nuxt-link>
     </li>
   </ul>
 </template>
 
 <script>
+import IconBase from '~/components/icons/IconBase.vue'
+import IconCheck from '~/components/icons/IconCheck.vue'
+import IconBook from '~/components/icons/IconBook.vue'
+
 export default {
+  components: {
+    IconBase,
+    IconCheck,
+    IconBook,
+  },
   data() {
     return {
       recipePath: '/recipes',

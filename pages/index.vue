@@ -14,6 +14,11 @@ export default {
       todoLists: [],
     }
   },
+  head() {
+    return {
+      title: "todo-lists"
+    }
+  },
   mounted() {
     this.$fire.firestore
       .collection('todo-lists')

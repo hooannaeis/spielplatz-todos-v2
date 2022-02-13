@@ -1,5 +1,8 @@
 const functions = require('firebase-functions');
 const vision = require("@google-cloud/vision");
+const admin = require('firebase-admin');
+admin.initializeApp();
+
 // const keyfile = require("./../../gcloudCredentials.json")
 
 // const config = {

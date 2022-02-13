@@ -147,6 +147,11 @@ export default {
       },
     }
   },
+  head() {
+    return {
+      title: this.todoListObject.name,
+    }
+  },
   computed: {
     ...mapGetters('todos', ['openTodos', 'doneTodos', 'currentPath']),
     currentMaxDoneTodoIndex() {
@@ -225,7 +230,7 @@ export default {
     },
     isTodoInOpenTodos(todoId) {
       if (!this.openTodos || !this.openTodos.length) return false
-      
+
       const existingTodosWithThisId = this.openTodos.filter((todo) => {
         return todo['.key'] === todoId
       })

@@ -7,7 +7,7 @@
       class="
         app_container
         text-gray-700
-        bg-green-400
+        bg-green-200
         min-h-screen
         pt-4
         pr-0
@@ -19,7 +19,7 @@
         duration-150
         ease-in
       "
-      :class="{ 'bg-blue-400': inRecipeMode }"
+      :class="{ 'bg-blue-200': inRecipeMode }"
     />
     <nav-bar class="fixed top-0 right-5"></nav-bar>
   </div>
@@ -39,6 +39,16 @@ export default {
   computed: {
     inRecipeMode() {
       return this.$route.fullPath.includes(this.recipePath)
+    },
+  },
+  watch: {
+    $route(e) {
+      this.$nextTick(() => {
+        this.$fire.analytics.logEvent('page_view', {
+          page_title: e.name,
+          page_location: 'https://spielplatz-todo.web.app' + e.fullPath,
+        })
+      })
     },
   },
 }
@@ -73,7 +83,7 @@ textarea {
   @apply bg-transparent resize-none border-none  w-full;
 }
 
-input[type=text] {
+input[type='text'] {
   overflow: auto;
   outline: none;
 

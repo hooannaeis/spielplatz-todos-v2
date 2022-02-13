@@ -15,8 +15,8 @@
     "@nuxtjs/pwa": "^3.3.5",
     "core-js": "^3.15.1",
     "firebase": "^8.10.0",
-    "nuxt": "^2.15.7",
     "lexorank": "^1.0.4",
+    "nuxt": "^2.15.7",
     "vuedraggable": "^2.24.3"
   },
   "devDependencies": {
