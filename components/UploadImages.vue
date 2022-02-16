@@ -76,6 +76,7 @@ export default {
   },
   methods: {
     handleFileUploads(event) {
+      this.$store.commit('recipes/resetImageMetaData')
       this.$store.commit('recipes/setImagesToUpload', event.target.files)
       for (let i = 0; i < event.target.files.length; i++) {
         const file = event.target.files[i]

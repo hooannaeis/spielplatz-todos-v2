@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full">
+  <div class="w-full h-full">
     <section class="w-full flex justify-end fixed bottom-4 right-4 z-10">
       <button
         v-show="isSufficientInput && inAddMode"
@@ -28,13 +28,15 @@
       class="
         transform
         transition-transform
-        duration-300
+        duration-600
         ease-out
         bg-gray-800
         text-gray-50
         rounded-t-lg
         p-4
         pb-20
+        overflow-auto
+        h-full
       "
       :class="[inAddMode ? 'translate-y-0' : 'translate-y-full']"
     >
@@ -92,6 +94,8 @@ export default {
     toggleAddMode() {
       if (this.inAddMode) {
         this.inAddMode = false
+        this.$store.commit('recipes/resetImageMetaData')
+        this.newRecipeName = undefined
         this.error = undefined
         return
       }

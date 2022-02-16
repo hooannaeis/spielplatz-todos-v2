@@ -19,7 +19,9 @@ export const mutations = {
   setImagesToUpload(state, payload) {
     state.imagesToUpload = payload
   },
-
+  resetImageMetaData(state) {
+    state.imagesToUploadMetaData = {}
+  },
   setImageMetaData(state, payload) {
     if (!payload.fileName) { throw new Error("missing fileName: ", payload) }
 
