@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full">
+  <div :class="[inAddMode ? 'w-full h-full' : 'w-full']">
     <section class="w-full flex justify-end fixed bottom-4 right-4 z-10">
       <button
         v-show="isSufficientInput && inAddMode"
