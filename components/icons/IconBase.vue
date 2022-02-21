@@ -6,10 +6,10 @@
     :viewBox="viewBox"
     :aria-labelledby="iconName"
     role="presentation"
-    :style="svgStyle"
+    :style="'fill:' + fillColor"
   >
     <title :id="iconName" lang="en">{{ iconName }} icon</title>
-    <g :stroke="iconColor" :fill="iconFillColor" :stroke-width="strokeWidth">
+    <g :stroke="strokeColor" :fill="fillColor" :stroke-width="strokeWidth">
       <slot />
     </g>
   </svg>
@@ -34,7 +34,7 @@ export default {
       type: [Number, String],
       default: "100%"
     },
-    iconColor: {
+    strokeColor: {
       type: String,
       default: "#f6f6f6"
     },
@@ -42,7 +42,7 @@ export default {
       type: String,
       default: "6px"
     },
-    iconFillColor: {
+    fillColor: {
       type: String,
       default: "#f6f6f6"
     },

@@ -14,8 +14,10 @@
   },
   "dependencies": {
     "@google-cloud/vision": "2.4.2",
+    "base64-stream": "^1.0.0",
     "firebase-admin": "*",
-    "firebase-functions": "^3.3.0"
+    "firebase-functions": "^3.3.0",
+    "node-fetch": "2"
   },
   "devDependencies": {
     "eslint": "^5.12.0",
