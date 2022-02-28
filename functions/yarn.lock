@@ -158,7 +158,7 @@
     stream-events "^1.0.4"
     xdg-basedir "^4.0.0"
 
-"@google-cloud/vision@^8.6.0":
+"@google-cloud/vision@2.4.2":
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/@google-cloud/vision/-/vision-2.4.2.tgz#b8552c08eac0d28b5fda561591e851fd3d04a028"
   integrity sha512-2IazcBR9K0JJtFJWVXq0Ko3VQtcHG1/xAaxpfJ550aSK7gGq6o4gmDt+z6J61qWYlcE9w7Wb3b+lH6YzqF/HgQ==
@@ -464,6 +464,11 @@ base64-js@^1.3.0:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
+
+base64-stream@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/base64-stream/-/base64-stream-1.0.0.tgz#157ae00bc7888695e884e1fcc51c551fdfa8a1fa"
+  integrity sha512-BQQZftaO48FcE1Kof9CmXMFaAdqkcNorgc8CxesZv9nMbbTF1EFyQe89UOuh//QMmdtfUDXyO8rgUalemL5ODA==
 
 bignumber.js@^9.0.0:
   version "9.0.2"
@@ -1588,7 +1593,7 @@ nice-try@^1.0.4:
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
   integrity sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==
 
-node-fetch@^2.6.1:
+node-fetch@2, node-fetch@^2.6.1:
   version "2.6.7"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
   integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==

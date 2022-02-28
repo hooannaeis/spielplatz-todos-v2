@@ -1,0 +1,54 @@
+<template>
+  <g ref="padlock">
+    <g transform="matrix(1,0,0,1,-266,-116)">
+      <g id="padlock">
+        <g id="base" transform="matrix(1,0,0,1,259.75,108.889)">
+          <path
+            d="M118.75,85.75C118.75,82.691 116.267,80.208 113.208,80.208L11.792,80.208C8.733,80.208 6.25,82.691 6.25,85.75L6.25,153.833C6.25,156.892 8.733,159.375 11.792,159.375L113.208,159.375C116.267,159.375 118.75,156.892 118.75,153.833L118.75,85.75ZM68.75,118.528L68.75,106.802C68.75,98.949 67.243,92.583 65.385,92.583L59.615,92.583C57.757,92.583 56.25,98.949 56.25,106.802L56.25,118.528C51.918,120.788 48.958,125.322 48.958,130.542C48.958,138.016 55.026,144.083 62.5,144.083C69.974,144.083 76.042,138.016 76.042,130.542C76.042,125.322 73.082,120.788 68.75,118.528Z"
+            style="fill: white"
+          />
+        </g>
+        <g id="curve-t0" transform="matrix(1,0,0,1,259.75,106.805)">
+          <path
+            ref="curve_t0"
+            d="M25,82.292C25,19.37 87.601,12.773 100.729,62.5C102.266,68.324 103.125,74.922 103.125,82.292"
+            style="
+              fill: none;
+              stroke: rgb(248, 247, 242);
+              stroke-width: 14.58px;
+            "
+          />
+        </g>
+      </g>
+    </g>
+  </g>
+</template>
+
+<script>
+import { gsap, Power4 } from 'gsap'
+const openPadlockPath =
+  'M157.292,57.292C156.875,5.083 103.396,3.667 103.125,54.167C103.093,60.191 103.125,74.922 103.125,82.292'
+
+export default {
+  methods: {
+    shakePadlock() {
+      gsap.to(this.$refs.padlock, 0.1, { x: '+=20', yoyo: true, repeat: 3 })
+      gsap.to(this.$refs.padlock, 0.1, { y: '-=20', yoyo: true, repeat: 3 })
+    },
+    openPadlock() {
+      gsap.to(this.$refs.curve_t0, 1, {
+        attr: { d: openPadlockPath },
+        ease: Power4
+      }).then(()=> {
+          this.$emit("openPadlockDone")
+      })
+    },
+  },
+}
+</script>
+
+<style>
+#curve-t1 {
+  visibility: hidden;
+}
+</style>

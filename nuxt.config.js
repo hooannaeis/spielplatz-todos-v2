@@ -1,5 +1,8 @@
 import firebaseConfig from "./firebaseConfig"
 
+const isDev = process.env.NODE_ENV === 'development'
+const useEmulators = true // manually change if emulators needed
+
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -19,6 +22,10 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
   ],
+  router: {
+    middleware: ['auth']
+  },
+
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -36,11 +43,25 @@ export default {
     config: firebaseConfig,
     onFirebaseHosting: true,
     services: {
-      firestore: {
-        memoryOnly: false, // default
-        enablePersistence: true,
+      auth: {
+        persistence: 'local', // default
+        initialize: {
+          onAuthStateChangedAction: 'onAuthStateChangedAction',
+          subscribeManually: false
+        },
+        ssr: false,
+        emulatorPort: isDev && useEmulators ? 9099 : undefined
       },
-      storage: true,
+      firestore: {
+        memoryOnly: false,
+        enablePersistence: true,
+        emulatorPort: isDev && useEmulators ? 8080 : undefined,
+      },
+      function: { emulatorPort: isDev && useEmulators ? 12345 : undefined, },
+      storage: {
+        emulatorPort: isDev && useEmulators ? 9199 : undefined,
+        emulatorHost: 'localhost',
+      },
       analytics: true
     },
   },

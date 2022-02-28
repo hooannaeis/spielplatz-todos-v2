@@ -1,53 +1,88 @@
 const functions = require('firebase-functions');
 const vision = require("@google-cloud/vision");
+const fetch = require("node-fetch");
+const { Base64Encode } = require("base64-stream");
+
 const admin = require('firebase-admin');
 admin.initializeApp();
 
-// const keyfile = require("./../../gcloudCredentials.json")
+// By default, the client will authenticate using the service account file
+// specified by the GOOGLE_APPLICATION_CREDENTIALS environment variable and use
+// the project specified by the GCLOUD_PROJECT environment variable. See
+// https://cloud.google.com/docs/authentication/getting-started#setting_the_environment_variable
 
-// const config = {
-//   projectId: keyfile.project_id,
-//   keyFilename: "./gcloudCredentials.json"
-// };
+// Instantiate a vision client
+const client = new vision.ImageAnnotatorClient();
 
 
-// This will allow only requests with an auth token to access the Vision
-// API, including anonymous ones.
-// It is highly recommended to limit access only to signed-in users. This may
-// be done by adding the following condition to the if statement:
-//    || context.auth.token?.firebase?.sign_in_provider === 'anonymous'
-// 
-// For more fine-grained control, you may add additional failure checks, ie:
-//    || context.auth.token?.firebase?.email_verified === false
-// Also see: https://firebase.google.com/docs/auth/admin/custom-claims
+/**
+ * Given a set of image file paths, extract the text and run them through the
+ * Cloud Vision API.
+ * @param {Index} index The stateful `Index` Object.
+ * @param {string[]} inputFiles The list of files to process.
+ * @returns {Promise<void>}
+ */
+async function getTextFromFiles(inputFiles) {
+  // Read all of the given files and provide request objects that will be
+  // passed to the Cloud Vision API in a batch request.
+  const requests = await Promise.all(
+    inputFiles.map(async filename => {
+      functions.logger.log(` 👉 ${filename}`);
+      return {
+        image: {
+          source: {
+            imageUri: filename
+          }
+        },
+        features: [{ type: 'TEXT_DETECTION' }],
+      };
+    })
+  );
+
+  // Make a call to the Vision API to detect text
+  const results = await client.batchAnnotateImages({ requests });
+  const detections = results[0].responses;
+  let fullTextBody = [];
+  await Promise.all(
+    inputFiles.map(async (filename, i) => {
+      const response = detections[i];
+      if (response.error) {
+        console.info(`API Error for ${filename}`, response.error);
+        return;
+      }
+      const textBody = response.textAnnotations
+      fullTextBody.push(textBody)
+    })
+  );
+  return fullTextBody
+}
+
+
 exports.main = functions.runWith({
   // Ensure the function has enough memory and time
   // to process large files
   timeoutSeconds: 300,
   memory: "1GB",
-}).https.onRequest(async (req, res) => {
-  const client = new vision.ImageAnnotatorClient();
+}).firestore.document('/recipes/{documentId}')
+  .onCreate(async (snap, context) => {
+    // this is what a recipe looks like: 
+    // const newRecipe = { name: this.newRecipeName, imageUrls, fullPaths }
+    // Grab the current value of what was written to Firestore.
+    const recipe = snap.data();
 
-  // if (!context.auth) {
-  //   throw new functions.https.HttpsError(
-  //     "unauthenticated",
-  //     "annotateImage must be called while authenticated."
-  //   );
-  // }
-  console.log(req.query)
-  try {
-    const filePath = decodeURI(req.query.filePath)
+    // Access the parameter `{documentId}` with `context.params`
+    functions.logger.log('getting text from images', context.params.documentId, recipe);
 
-    const request = {
-      image: { source: { imageUri: filePath } },
-      features: [{ type: "TEXT_DETECTION" }]
-    };
-    const [result] = await client.textDetection(filePath);
-    const detections = result.textAnnotations;
-    detections.forEach(text => console.log(text));
-    return detections
-  } catch (e) {
-    throw new functions.https.HttpsError("internal", e.message, e.details);
-  }
-});
+    try {
+      const fullTextBody = await getTextFromFiles(recipe.imageUrls)
+      functions.logger.log(fullTextBody)
 
+      // You must return a Promise when performing asynchronous tasks inside a Functions such as
+      // writing to Firestore.
+      // Setting an 'uppercase' field in Firestore document returns a Promise.
+      return snap.ref.set({ fullTextBody }, { merge: true });
+      // [END makeUppercaseBody]
+    } catch (e) {
+      throw new functions.https.HttpsError("internal", e.message, e.details);
+    }
+  });

@@ -6,8 +6,7 @@
     <Nuxt
       class="
         app_container
-        text-gray-700
-        bg-green-200
+        text-gray-50
         min-h-screen
         pt-4
         pr-0
@@ -19,28 +18,13 @@
         duration-150
         ease-in
       "
-      :class="{ 'bg-blue-200': inRecipeMode }"
     />
-    <nav-bar class="fixed top-0 right-5"></nav-bar>
   </div>
 </template>
 
 <script>
-import NavBar from '~/components/NavBar.vue'
 
 export default {
-  components: { NavBar },
-  data() {
-    return {
-      recipePath: '/recipes',
-      todoListPath: '/',
-    }
-  },
-  computed: {
-    inRecipeMode() {
-      return this.$route.fullPath.includes(this.recipePath)
-    },
-  },
   watch: {
     $route(e) {
       this.$nextTick(() => {
