@@ -83,7 +83,7 @@ textarea {
   @apply bg-transparent resize-none border-none  w-full;
 }
 
-input[type='text'] {
+input[type='text'], input[type='email'], input[type='password'] {
   overflow: auto;
   outline: none;
 
