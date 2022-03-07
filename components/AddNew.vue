@@ -157,10 +157,6 @@ export default {
         OBJECT_SKELLETON.rank = this.nextHighestRank
         this.$store.commit('todos/setNewHighestRank', this.nextHighestRank)
       }
-      this.$fire.analytics.logEvent('added_new', {
-        type: OBJECT_SKELLETON.type,
-        description: OBJECT_SKELLETON.description,
-      })
 
       this.$fire.firestore
         .collection(FIRESTORE_COLLECTION)
@@ -170,6 +166,10 @@ export default {
 
           this.setTargetHeight(this.$refs.newObjectName)
 
+          this.$store.dispatch('analytics/track', {
+            eventName: 'add_new',
+            eventParams: { type: this.type },
+          })
           // this exists if we are creating a new list
           if (this.redirectToObjectPath) {
             this.$router.push({ path: doc.path })

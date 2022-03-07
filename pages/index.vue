@@ -16,7 +16,7 @@ export default {
   },
   head() {
     return {
-      title: "todo-lists"
+      title: 'todo-lists',
     }
   },
   mounted() {
@@ -29,6 +29,7 @@ export default {
           this.todoLists.push({ ...doc.data(), id: doc.id })
         })
       })
+    this.$store.dispatch("analytics/track", {eventName:"page_view", eventParams: {}})
   },
 }
 </script>

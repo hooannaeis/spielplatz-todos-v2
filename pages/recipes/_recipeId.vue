@@ -74,6 +74,12 @@ export default {
         })
     }
   },
+  mouned() {
+    this.$store.dispatch('analytics/track', {
+      eventName: 'page_view',
+      eventParams: {},
+    })
+  },
   methods: {
     async deleteRecipe() {
       this.deleting = true

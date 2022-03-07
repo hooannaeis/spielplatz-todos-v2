@@ -41,16 +41,6 @@ export default {
       return this.$route.fullPath.includes(this.recipePath)
     },
   },
-  watch: {
-    $route(e) {
-      this.$nextTick(() => {
-        this.$fire.analytics.logEvent('page_view', {
-          page_title: e.name,
-          page_location: 'https://spielplatz-todo.web.app' + e.fullPath,
-        })
-      })
-    },
-  },
 }
 </script>
 

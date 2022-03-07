@@ -55,6 +55,12 @@ export default {
       error: undefined,
     }
   },
+  mounted() {
+    this.$store.dispatch('analytics/track', {
+      eventName: 'page_view',
+      eventParams: {},
+    })
+  },
   methods: {
     resetError() {
       this.error = undefined

@@ -172,6 +172,10 @@ export default {
 
     this.getTodos()
     this.setTopTodos()
+    this.$store.dispatch('analytics/track', {
+      eventName: 'page_view',
+      eventParams: {},
+    })
   },
   beforeDestroy() {
     this.$store.commit('todos/clearCurrentList')
@@ -300,6 +304,11 @@ export default {
         .doc(this.$store.getters['todos/currentPath'])
         .delete()
         .then(() => {
+          this.$store.dispatch('analytics/track', {
+            eventName: 'delete',
+            eventParams: {},
+          })
+
           console.log(
             `deleted todo-list: ${this.$store.getters['todos/currentPath']}`
           )

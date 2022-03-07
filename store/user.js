@@ -16,9 +16,11 @@ export const getters = {
 
 export const actions = {
   onAuthStateChangedAction(state, { authUser, claims }) {
+    console.log(this)
     if (!authUser) {
       // remove state
       state.commit('setUser', null)
+      this.$fire.analytics.setUserId(null)
 
       // redirect from here
       this.$router.push({
