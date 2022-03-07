@@ -17,6 +17,18 @@ $ yarn start
 $ yarn generate
 ```
 
+## Dev Setup
+```bash
+# run firebase emulators with state
+$ firebase emulators:start --import=./testseed --export-on-exit
+
+
+# run hosting dev separately because the firbase emulator is not hot-reloading
+$ npm run dev
+```
+
+
+
 For detailed explanation on how things work, check out the [documentation](https://nuxtjs.org).
 
 ## Special Directories
