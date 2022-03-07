@@ -126,6 +126,10 @@ export default {
         .then((doc) => {
           this.error = undefined
           this.newRecipeName = ''
+          this.$store.dispatch('analytics/track', {
+            eventName: 'add_new',
+            eventParams: { type: "recipe" },
+          })
 
           this.$router.push({ path: doc.path })
           this.$store.commit('recipes/saveNewRecipe')
