@@ -1,6 +1,6 @@
 <template>
-  <div :class="[inAddMode ? 'w-full h-full' : 'w-full']">
-    <section class="w-full flex justify-end fixed bottom-4 right-4 z-10">
+  <div class="" :class="[inAddMode ? 'fixed bottom-0 w-full h-full' : '']">
+    <section class="flex justify-end fixed bottom-4 right-4 z-10">
       <button
         v-show="isSufficientInput && inAddMode"
         class="animate-fade-in-down bg-green-300 px-4 mr-4"
@@ -38,7 +38,7 @@
         overflow-auto
         h-full
       "
-      :class="[inAddMode ? 'translate-y-0' : 'translate-y-full']"
+      :class="[inAddMode ? 'translate-y-0' : 'translate-y-full hiden']"
     >
       <h2>neues Rezept</h2>
       <div v-if="error" class="text-red-300">{{ error }}</div>
@@ -128,7 +128,7 @@ export default {
           this.newRecipeName = ''
           this.$store.dispatch('analytics/track', {
             eventName: 'add_new',
-            eventParams: { type: "recipe" },
+            eventParams: { type: 'recipe' },
           })
 
           this.$router.push({ path: doc.path })

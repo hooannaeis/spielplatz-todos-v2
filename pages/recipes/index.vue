@@ -2,7 +2,7 @@
   <div class="relative">
     <h1 class="bg-gray-800 text-gray-100 p-4">Rezepte</h1>
     <List :list="recipes" :link-path="/recipes/" />
-    <add-recipe class="fixed bottom-0" />
+    <add-recipe/>
   </div>
 </template>
 
