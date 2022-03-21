@@ -9,7 +9,17 @@
         :key="imageUrl + imageUrlIndex"
       >
         <pill>
-          <img :src="imageUrl" :alt="'rezeptbeschreibung für ' + recipe.name" />
+          <object
+            :data="getWebPFilename(imageUrl)"
+            type="image/webp"
+            :alt="'rezeptbeschreibung für ' + recipe.name"
+            class="w-full"
+          >
+            <img
+              :src="imageUrl"
+              :alt="'rezeptbeschreibung für ' + recipe.name"
+            />
+          </object>
         </pill>
       </ul>
     </div>
@@ -81,24 +91,31 @@ export default {
     })
   },
   methods: {
+    getWebPFilename(orgFilename) {
+      return orgFilename.replace(/\.(jpeg|jpg|png|JPG)/, '.webp')
+    },
+    async deleteStorageObject(fullPath) {
+      // Create a reference to the file to delete
+      const fileRef = this.$fire.storage.ref().child(fullPath)
+      // Delete the file
+      await fileRef
+        .delete()
+        .then(() => {
+          console.log(`${fullPath} deleted`)
+        })
+        .catch((error) => {
+          console.error(`error deleting: ${fullPath}...${error}`)
+        })
+    },
     async deleteRecipe() {
       this.deleting = true
       if (this.recipe.fullPaths) {
         for (let i = 0; i < this.recipe.fullPaths.length; i++) {
           const fullPath = this.recipe.fullPaths[i]
-
-          // Create a reference to the file to delete
-          const fileRef = this.$fire.storage.ref().child(fullPath)
-
-          // Delete the file
-          await fileRef
-            .delete()
-            .then(() => {
-              console.log(`${fullPath} deleted`)
-            })
-            .catch((error) => {
-              console.error(`error deleting: ${fullPath}...${error}`)
-            })
+          await this.deleteStorageObject(fullPath)
+          
+          const webPFullPath = this.getWebPFilename(fullPath)
+          await this.deleteStorageObject(webPFullPath)
         }
       }
       this.$fire.firestore
