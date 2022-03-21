@@ -4,3 +4,6 @@
 
 const annotateImage = require('./src/annotateImage');
 exports.annotateImage = annotateImage.main;
+
+const convertImageFormat = require('./src/convertImageFormat');
+exports.convertImageFormat = convertImageFormat.main;
