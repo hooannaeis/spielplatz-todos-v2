@@ -27,7 +27,7 @@ exports.main = functions.storage.object().onFinalize(async (object) => {
   const bucket = gcs.bucket(fileBucket);
 
   const metadata = {
-    contentType,
+    contentType: "image/webp",
   };
 
   const webPFilename = fileName.replace(new RegExp(/\.[a-zA-Z]{2,6}$/), ".webp")
