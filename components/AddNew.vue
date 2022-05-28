@@ -167,8 +167,12 @@ export default {
           this.setTargetHeight(this.$refs.newObjectName)
 
           this.$store.dispatch('analytics/track', {
-            eventName: 'add_new',
-            eventParams: { type: this.type },
+            eventName: 'add',
+            eventParams: {
+              type: this.type,
+              label: OBJECT_SKELLETON.description,
+              firesotre_collection: FIRESTORE_COLLECTION,
+            },
           })
           // this exists if we are creating a new list
           if (this.redirectToObjectPath) {

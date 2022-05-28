@@ -127,8 +127,8 @@ export default {
           this.error = undefined
           this.newRecipeName = ''
           this.$store.dispatch('analytics/track', {
-            eventName: 'add_new',
-            eventParams: { type: 'recipe' },
+            eventName: 'add',
+            eventParams: { type: 'recipe', ...doc },
           })
 
           this.$router.push({ path: doc.path })

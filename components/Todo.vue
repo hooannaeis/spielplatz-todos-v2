@@ -64,7 +64,6 @@
 </template>
 
 <script>
-
 export default {
   props: {
     initialTodoDescription: {
@@ -120,13 +119,24 @@ export default {
       this.todoDescription = this.initialTodoDescription
     },
     updateTodo(updates) {
-      this.$fire.firestore
+      const docRef = this.$fire.firestore
         .doc(this.$route.path)
         .collection('todos')
         .doc(this.todoID)
+
+      docRef
         .update(updates)
         .then(() => {
-          console.log('updated in firestore: ', updates)
+          console.log('updated in firestore: ', updates, docRef)
+          this.$store.dispatch('analytics/track', {
+            eventName: 'change',
+            eventParams: {
+              type: 'todo',
+              label: this.todoDescription,
+              firesotre_collection: this.$route.path,
+              ...updates,
+            },
+          })
         })
         .catch((err) => {
           console.error(err)
@@ -143,6 +153,14 @@ export default {
         .delete()
         .then(() => {
           console.log('deleted: ', this.todoID)
+          this.$store.dispatch('analytics/track', {
+            eventName: 'delete',
+            eventParams: {
+              type: 'todo',
+              firesotre_collection: this.$route.path,
+              label: this.todoDescription
+            },
+          })
         })
         .catch((err) => {
           console.error(err)
