@@ -91,3 +91,7 @@ sw.*
 firebaseConfig.js
 
 *gcloudCredentials.json
+
+testseed/*
+firebase-export*/*
+.firebase/*
