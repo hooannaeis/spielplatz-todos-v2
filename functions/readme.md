@@ -4,7 +4,7 @@
 ### starting the debugger
 if you want to run the functions locally, start by adding a service-account key to the environment variables:
 
-```$  $env:GOOGLE_APPLICATION_CREDENTIALS="C:\Users\username\Downloads\service-account-file.json"```
+```$  $env:GOOGLE_APPLICATION_CREDENTIALS="C:\Users\hanne\Documents\Bitbucket Repositories\spielplatz-todos-v2\functions\gcloudCredentials.json"```
 
 more here: https://cloud.google.com/vision/docs/before-you-begin
 Then run the emulator by
