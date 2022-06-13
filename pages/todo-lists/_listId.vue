@@ -8,7 +8,27 @@
     <loading-todo v-if="loading" class="m-5"></loading-todo>
     <loading-todo v-if="loading" class="m-5"></loading-todo>
     <div v-else class="card">
-      <h3>offen</h3>
+      <section class="relative w-full items-center text-center">
+        <expandable-options class="top-0 left-0 absolute">
+          <pill @click.native="sortTodos">sort</pill>
+          <are-you-sure-execute
+            v-if="doneTodos && doneTodos.length && doneTodos.length > 0"
+            accept-text="👍🏻"
+            decline-text="👎🏻"
+            @acceptDecision="deleteAllDoneTodos"
+          >
+            <pill class="bg-green-200"> erledigte Todos löschen </pill>
+          </are-you-sure-execute>
+          <are-you-sure-execute
+            accept-text="👍🏻"
+            decline-text="👎🏻"
+            @acceptDecision="deleteList"
+          >
+            <pill class="bg-red-200"> Todoliste löschen </pill>
+          </are-you-sure-execute>
+        </expandable-options>
+        <h3>offen</h3>
+      </section>
       <div v-if="!openTodos">Diese Liste ist leer</div>
       <draggable
         tag="div"
@@ -77,46 +97,6 @@
         </button>
       </section>
     </div>
-    <section
-      v-if="!loading"
-      class="grid gap-y-4 justify-items-center bg-green-300 p-5 my-5"
-    >
-      <are-you-sure-execute
-        v-if="doneTodos && doneTodos.length && doneTodos.length > 0"
-        accept-text="👍🏻"
-        decline-text="👎🏻"
-        @acceptDecision="deleteAllDoneTodos"
-      >
-        <button
-          class="
-            w-full
-            bg-green-200
-            border-2 border-red-400
-            font-light
-            text-gray-700
-          "
-        >
-          erledigte Todos löschen
-        </button>
-      </are-you-sure-execute>
-      <are-you-sure-execute
-        accept-text="👍🏻"
-        decline-text="👎🏻"
-        @acceptDecision="deleteList"
-      >
-        <button
-          class="
-            w-full
-            bg-green-200
-            border-2 border-red-400
-            font-light
-            text-gray-700
-          "
-        >
-          Todoliste löschen
-        </button>
-      </are-you-sure-execute>
-    </section>
     <AddNew type="todo" />
   </div>
 </template>
@@ -271,6 +251,19 @@ export default {
           })
         })
     },
+    updateTodo(todoKey, update) {
+      this.$fire.firestore
+        .doc(this.$store.getters['todos/currentPath'])
+        .collection('todos')
+        .doc(todoKey)
+        .update(update)
+        .then(() => {
+          console.log('updated in firestore: ', update)
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    },
     handleItemDragging(e) {
       console.log('change', e)
       this.drag = false
@@ -281,20 +274,42 @@ export default {
           e.oldIndex
         )
         const rankUpdate = { rank: newRank }
-        this.$fire.firestore
-          .doc(this.$store.getters['todos/currentPath'])
-          .collection('todos')
-          .doc(movedItem['.key'])
-          .update(rankUpdate)
-          .then(() => {
-            console.log('updated in firestore: ', rankUpdate)
-            console.log('after')
-            console.table(this.openTodos, ['description', 'rank'])
-          })
-          .catch((err) => {
-            console.error(err)
-          })
+        const todoKey = movedItem['.key']
+        this.updateTodo(todoKey, rankUpdate)
       }
+    },
+    getLabelArray() {
+      const labelArray = []
+      this.openTodos.forEach((todo) => {
+        labelArray.push(todo.description)
+      })
+      return labelArray;
+    },
+    async sortTodos() {
+      if (!this.openTodos || this.openTodos.length < 2) return
+      const labelArray = this.getLabelArray()
+      const labelOrder = await this.$fire.functions.httpsCallable('getLabelOrder')({
+        listID: this.currentPath,
+        labels: labelArray,
+      }).catch((error) => {
+        console.error(error)
+      })
+      console.log(labelOrder)
+
+      const todoCopy = JSON.parse(JSON.stringify(this.openTodos))
+      const sortUpdates = []
+      for (let i = 0; i < todoCopy.length; i++) {
+        const todo = todoCopy[i]
+        const nextHighestRank = this.$store.getters['todos/nextHighestRank']
+        const update = { rank: nextHighestRank }
+        const todoKey = todo['.key']
+        this.$store.commit('todos/setNewHighestRank', nextHighestRank)
+        sortUpdates.push({ todoKey, update })
+      }
+
+      sortUpdates.forEach((sortUpdate) => {
+        this.updateTodo(sortUpdate.todoKey, sortUpdate.update)
+      })
     },
     toggleDangerZone() {
       this.showDangerZone = !this.showDangerZone

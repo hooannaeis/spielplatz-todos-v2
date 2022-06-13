@@ -1,10 +1,10 @@
 const ignorePaths = ["\u002F__webpack_hmr","\u002F_loading","\u002F_nuxt\u002F"]
 
 importScripts(
-  'https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js'
+  'https://www.gstatic.com/firebasejs/9.8.3/firebase-app.js'
 )
 importScripts(
-  'https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js'
+  'https://www.gstatic.com/firebasejs/9.8.3/firebase-auth.js'
 )
 firebase.initializeApp({"apiKey":"AIzaSyDnL8mKAUiD8j3YoY46kmAWioS6ukeYxBQ","authDomain":"spielplatz-todo.firebaseapp.com","projectId":"spielplatz-todo","storageBucket":"spielplatz-todo.appspot.com","messagingSenderId":"522285590974","appId":"1:522285590974:web:7466791bee4695199f31ef"})
 
@@ -37,7 +37,7 @@ const getIdToken = () => {
 const fetchWithAuthorization = async (original, idToken) => {
   // Clone headers as request headers are immutable.
   const headers = new Headers()
-  for (let entry of original.headers.entries()) {
+  for (const entry of original.headers.entries()) {
     headers.append(entry[0], entry[1])
   }
 

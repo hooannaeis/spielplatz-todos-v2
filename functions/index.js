@@ -7,3 +7,6 @@ exports.annotateImage = annotateImage.main;
 
 const convertImageFormat = require('./src/convertImageFormat');
 exports.convertImageFormat = convertImageFormat.main;
+
+const getLabelOrder = require('./src/getLabelOrder');
+exports.getLabelOrder = getLabelOrder.main;
