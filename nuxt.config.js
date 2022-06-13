@@ -57,7 +57,7 @@ export default {
         enablePersistence: true,
         emulatorPort: isDev && useEmulators ? 8080 : undefined,
       },
-      function: { emulatorPort: isDev && useEmulators ? 12345 : undefined, },
+      functions: { emulatorPort: isDev && useEmulators ? 12345 : undefined, },
       storage: {
         emulatorPort: isDev && useEmulators ? 9199 : undefined,
         emulatorHost: 'localhost',

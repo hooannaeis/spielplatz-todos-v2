@@ -3,7 +3,9 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
-  "functions": {},
+  "functions": {
+    "source": "functions"
+  },
   "hosting": {
     "public": "./dist",
     "predeploy": [
@@ -23,6 +25,10 @@
         "source": "/functions/annotateImage",
         "function": "annotateImage"
       }
+      {
+        "source": "/functions/getLabelOrder",
+        "function": "getLabelOrder"
+      }
     ]
   },
   "emulators": {
@@ -34,9 +40,6 @@
     },
     "database": {
       "port": 9000
-    },
-    "hosting": {
-      "port": 5000
     },
     "auth": {
       "port": 9099
