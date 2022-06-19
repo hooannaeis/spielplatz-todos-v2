@@ -10,21 +10,21 @@
     <div v-else class="card">
       <section class="relative w-full items-center text-center">
         <expandable-options class="top-0 left-0 absolute">
-          <pill @click.native="sortTodos">sort</pill>
+          <pill @click.native="sortTodos">sortieren</pill>
           <are-you-sure-execute
             v-if="doneTodos && doneTodos.length && doneTodos.length > 0"
             accept-text="👍🏻"
             decline-text="👎🏻"
             @acceptDecision="deleteAllDoneTodos"
           >
-            <pill class="bg-green-200"> erledigte Todos löschen </pill>
+            <pill> erledigte Todos löschen </pill>
           </are-you-sure-execute>
           <are-you-sure-execute
             accept-text="👍🏻"
             decline-text="👎🏻"
             @acceptDecision="deleteList"
           >
-            <pill class="bg-red-200"> Todoliste löschen </pill>
+            <pill> Todoliste löschen </pill>
           </are-you-sure-execute>
         </expandable-options>
         <h3>offen</h3>
@@ -283,29 +283,39 @@ export default {
       this.openTodos.forEach((todo) => {
         labelArray.push(todo.description)
       })
-      return labelArray;
+      return labelArray
     },
     async sortTodos() {
+      this.$store.commit('todos/toggleTodoListOptionsVisible')
+
       if (!this.openTodos || this.openTodos.length < 2) return
       const labelArray = this.getLabelArray()
-      const labelOrder = await this.$fire.functions.httpsCallable('getLabelOrder')({
-        listID: this.currentPath,
-        labels: labelArray,
-      }).catch((error) => {
-        console.error(error)
-      })
+      const response = await this.$fire.functions
+        .httpsCallable('getLabelOrder')({
+          listID: this.currentPath,
+          labels: labelArray,
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+      const labelOrder = response?.data?.labelOrder
       console.log(labelOrder)
 
       const todoCopy = JSON.parse(JSON.stringify(this.openTodos))
       const sortUpdates = []
-      for (let i = 0; i < todoCopy.length; i++) {
-        const todo = todoCopy[i]
+      for (let i = 0; i < labelOrder.length; i++) {
+        // go through the labelOrder in reverse
+        const label = labelOrder[labelOrder.length  - i - 1]
+        const firestoreLabel = todoCopy.find(
+          ({ description }) => description === label
+        )
         const nextHighestRank = this.$store.getters['todos/nextHighestRank']
         const update = { rank: nextHighestRank }
-        const todoKey = todo['.key']
+        const todoKey = firestoreLabel['.key']
         this.$store.commit('todos/setNewHighestRank', nextHighestRank)
         sortUpdates.push({ todoKey, update })
       }
+      console.log('sortUdates: ', sortUpdates)
 
       sortUpdates.forEach((sortUpdate) => {
         this.updateTodo(sortUpdate.todoKey, sortUpdate.update)
@@ -315,6 +325,7 @@ export default {
       this.showDangerZone = !this.showDangerZone
     },
     deleteList() {
+      this.$store.commit('todos/toggleTodoListOptionsVisible')
       this.$fire.firestore
         .doc(this.$store.getters['todos/currentPath'])
         .delete()
@@ -335,6 +346,7 @@ export default {
         })
     },
     deleteAllDoneTodos() {
+      this.$store.commit('todos/toggleTodoListOptionsVisible')
       this.doneTodos.forEach((doneTodo) => {
         const docRef = this.$fire.firestore
           .doc(this.$store.getters['todos/currentPath'])

@@ -7,7 +7,8 @@ export const state = () => ({
   },
   currentPath: undefined,
   currentHighestRank: undefined,
-  topTodos: []
+  topTodos: [],
+  todoListOptionsVisible: false,
 })
 
 export const mutations = {
@@ -42,6 +43,9 @@ export const mutations = {
   },
   clearTopTodos(state) {
     Vue.set(state, "topTodos", [])
+  },
+  toggleTodoListOptionsVisible(state) {
+    state.todoListOptionsVisible = !state.todoListOptionsVisible
   }
 }
 
@@ -63,6 +67,9 @@ export const getters = {
   },
   topTodos: (state) => {
     return state.topTodos
+  },
+  todoListOptionsVisible: (state) => {
+    return state.todoListOptionsVisible
   },
   getRankBetweenRanks: (state, getters) => (newIndex, oldIndex) => {
     const sortedTodos = getters.openTodos;

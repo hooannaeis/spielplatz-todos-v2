@@ -15,7 +15,7 @@
     </span>
     <span
       v-else
-      class="absolute w-full h-full"
+      class="absolute w-full h-full top-0 left-0"
       @click="toggleDecisionMode"
     ></span>
     <slot />
