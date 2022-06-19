@@ -24,7 +24,7 @@
       {
         "source": "/functions/annotateImage",
         "function": "annotateImage"
-      }
+      },
       {
         "source": "/functions/getLabelOrder",
         "function": "getLabelOrder"
