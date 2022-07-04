@@ -57,8 +57,7 @@ async function getTextFromFiles(inputFiles) {
   return fullTextBody
 }
 
-
-exports.main = functions.runWith({
+exports.main = functions.region('europe-west2').runWith({
   // Ensure the function has enough memory and time
   // to process large files
   timeoutSeconds: 300,

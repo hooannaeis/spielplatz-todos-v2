@@ -5,7 +5,7 @@ const sharp = require('sharp');
 
 const gcs = new Storage();
 
-exports.main = functions.storage.object().onFinalize(async (object) => {
+exports.main = functions.region('europe-west2').storage.object().onFinalize(async (object) => {
   const fileBucket = object.bucket; // The Storage bucket that contains the file.
   const filePath = object.name; // File path in the bucket.
   const contentType = object.contentType; // File content type.

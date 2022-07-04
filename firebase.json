@@ -28,6 +28,10 @@
       {
         "source": "/functions/getLabelOrder",
         "function": "getLabelOrder"
+      },
+      {
+        "source": "/functions/getLabelOrder",
+        "function": "getLabelOrder"
       }
     ]
   },

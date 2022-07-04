@@ -23,26 +23,29 @@ function addMissingLabels(orderedLabels, allLabels) {
   return completeLabels;
 }
 
-exports.main = functions.https.onCall(async (data, context) => {
+exports.main = functions.region('europe-west2').https.onCall(async (data, context) => {
   console.log("data: ", data)
 
   // Checking that the user is authenticated.
   if (!context.auth) {
     // Throwing an HttpsError so that the client gets the error details.
-    throw new functions.https.HttpsError('failed-precondition', 'The function must be called while authenticated.');
+    throw new functions.https.HttpsError('unauthenticated', 'The function must be called while authenticated.');
   }
+
 
   const labels = data.labels
   let listID = data.listID
 
   // if we are in debug, we want to make use of a 
   // production listID that acutally has data to work on
-  if (context?.rawRequest?._readableState?.headers?.host.includes("localhost")) {
+  if (context?.rawRequest?._readableState?.headers?.host.includes("localhost") || context?.rawRequest?._readableState?.headers?.origin.includes("localhost")) {
     listID = "/todo-lists/ybDb2kPUB8t5hJYSWTry"
   }
 
+  if (listID && !listID.startsWith("/")) { listID = "/" + listID }
+
   if (!listID) {
-    throw new functions.https.HttpsError('missing-argument', 'The function must be called with a listID parameter');
+    throw new functions.https.HttpsError('invalid-argument', 'The function must be called with a listID parameter');
   }
 
   const bigquery = new BigQuery();

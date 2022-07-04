@@ -305,15 +305,17 @@ export default {
       const sortUpdates = []
       for (let i = 0; i < labelOrder.length; i++) {
         // go through the labelOrder in reverse
-        const label = labelOrder[labelOrder.length  - i - 1]
+        const label = labelOrder[labelOrder.length - i - 1]
         const firestoreLabel = todoCopy.find(
           ({ description }) => description === label
         )
-        const nextHighestRank = this.$store.getters['todos/nextHighestRank']
-        const update = { rank: nextHighestRank }
-        const todoKey = firestoreLabel['.key']
-        this.$store.commit('todos/setNewHighestRank', nextHighestRank)
-        sortUpdates.push({ todoKey, update })
+        if (firestoreLabel && firestoreLabel['.key']) {
+          const nextHighestRank = this.$store.getters['todos/nextHighestRank']
+          const update = { rank: nextHighestRank }
+          const todoKey = firestoreLabel['.key']
+          this.$store.commit('todos/setNewHighestRank', nextHighestRank)
+          sortUpdates.push({ todoKey, update })
+        }
       }
       console.log('sortUdates: ', sortUpdates)
 
