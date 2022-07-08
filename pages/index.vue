@@ -29,7 +29,13 @@ export default {
           this.todoLists.push({ ...doc.data(), id: doc.id })
         })
       })
-    this.$store.dispatch("analytics/track", {eventName:"page_view", eventParams: {}})
+    this.$store.dispatch('analytics/track', {
+      eventName: 'page_view',
+      eventParams: {
+        page_location: document.location.href,
+        page_title: document.title,
+      },
+    })
   },
 }
 </script>

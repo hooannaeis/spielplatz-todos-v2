@@ -128,6 +128,16 @@ export default {
         .update(updates)
         .then(() => {
           console.log('updated in firestore: ', updates, docRef)
+
+          // in case we are marking a todo as done,
+          // we want to add the done count to the
+          // tracking payload
+          if (updates.done) {
+            const doneItemCount = this.$store.getters[
+              'analytics/getNextDoneItemCount'
+            ](this.$route.path)
+            updates.done_item_count = doneItemCount
+          }
           this.$store.dispatch('analytics/track', {
             eventName: 'change',
             eventParams: {
@@ -158,7 +168,7 @@ export default {
             eventParams: {
               type: 'todo',
               firesotre_collection: this.$route.path,
-              label: this.todoDescription
+              label: this.todoDescription,
             },
           })
         })
